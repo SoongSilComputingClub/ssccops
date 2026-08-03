@@ -59,7 +59,7 @@ body:
     id: security
     attributes:
       label: 보안 확인
-      description: 인프라·설정 작업만 해당. CLAUDE.md — "서비스 키는 저장소에 커밋 금지"
+      description: 인프라·설정 작업만 해당. 서비스 키·환경변수는 저장소에 커밋 금지.
       options:
         - label: 인증정보를 저장소에 커밋하지 않았다
         - label: 환경변수는 `.env.example` 에 키 이름만 기록했다

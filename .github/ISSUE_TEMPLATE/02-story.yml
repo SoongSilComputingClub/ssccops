@@ -87,7 +87,7 @@ body:
     id: done
     attributes:
       label: 완료 조건
-      description: CLAUDE.md — "코드만 배포하는 것으로는 납품이 아니다"
+      description: 코드 배포만으로는 완료가 아니다 — 문서까지 갱신해야 닫는다
       options:
         - label: 수용 기준(AC) 전부 통과
         - label: 테스트 작성 (상태 전이 · 권한 · 검증 규칙)

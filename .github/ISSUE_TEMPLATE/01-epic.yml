@@ -34,7 +34,7 @@ body:
     id: problem
     attributes:
       label: 대응하는 핵심 문제
-      description: CLAUDE.md의 3대 구조적 결핍 중 무엇을 푸는가
+      description: 이 Epic이 해결하는 운영상의 구조적 문제
       options:
         - "① 단일 데이터 원천(SSoT) 부재"
         - "② 검수·승인 프로세스 부재"
