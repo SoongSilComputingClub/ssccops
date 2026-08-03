@@ -1,0 +1,57 @@
+name: 🔧 Task (작업)
+description: Story를 쪼갠 실제 작업 단위 — 계층별·개인별 작업
+title: "[] "
+labels: ["type:task"]
+type: Task
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Story 하나가 여러 계층(DB·API·화면)에 걸치거나, 둘이 나눠 작업할 때 씁니다.
+        **Story가 작으면 Task를 만들지 마세요** — 카드만 늘어납니다.
+
+        생성 후 상단 **Parent issue** 에서 소속 Story를 연결하세요.
+
+  - type: input
+    id: parent
+    attributes:
+      label: 상위 Story
+      description: 이 Task가 속한 Story의 요구사항 ID와 이슈 번호
+      placeholder: "OPS-010 / #87"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: 작업 계층
+      options:
+        - DB (스키마 · 마이그레이션 · RLS)
+        - Backend (API · 도메인 로직)
+        - Frontend (화면 · 상태관리)
+        - 공통 (타입 · 유틸 · 설정)
+    validations:
+      required: true
+
+  - type: textarea
+    id: work
+    attributes:
+      label: 작업 내용
+      description: 이 Task에서 무엇을 만드는가
+      value: |
+        - [ ]
+        - [ ]
+      placeholder: |
+        - [ ] operation_status_history 테이블 생성
+        - [ ] 상태 전이 검증 함수 (허용 전환표 기반)
+        - [ ] 마이그레이션 스크립트 (기존 데이터 '기획'으로 초기화)
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: 참고 사항
+      description: 구현 시 주의점, 참고 문서
+    validations:
+      required: false

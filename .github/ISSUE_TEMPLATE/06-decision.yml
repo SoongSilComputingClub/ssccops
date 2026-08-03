@@ -1,0 +1,105 @@
+name: 결정 필요
+description: 운영진 또는 개발팀의 확정이 필요한 사항을 올립니다
+title: "[DEC] "
+labels: ["type:decision", "status:needs-decision"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        "이거 어떻게 할까요?"로 끝나는 이슈는 방치됩니다.
+        **선택지 · 기한 · 결정하지 않으면 생기는 영향**을 반드시 채웁니다.
+
+        결정이 나면 `docs/decisions/` 에 ADR로 옮기고 이 이슈를 닫습니다.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: 결정해야 할 것
+      description: 한 문장으로. 예/아니오 또는 선택지 중 하나로 답할 수 있게 씁니다.
+      placeholder: 회원 가입 시 학번을 필수로 받을 것인가?
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 배경
+      description: 왜 이 결정이 필요한지, 지금 무엇이 막혀 있는지
+      placeholder: |
+        회원 데이터 모델을 확정해야 DB 스키마를 만들 수 있는데,
+        학번을 필수로 받으면 졸업생·외부 참여자를 등록할 수 없다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: options
+    attributes:
+      label: 선택지
+      description: 각 선택지의 장단점을 함께 적습니다. 최소 2개.
+      value: |
+        ### A안:
+        - 장점:
+        - 단점:
+
+        ### B안:
+        - 장점:
+        - 단점:
+      placeholder: |
+        ### A안: 학번 필수
+        - 장점: 동명이인 구분 가능, 재학생 확인 용이
+        - 단점: 졸업생·외부 참여자 등록 불가
+
+        ### B안: 학번 선택 + 자체 핸들 필수
+        - 장점: 모든 유형 수용 가능
+        - 단점: 동명이인 구분에 추가 로직 필요
+    validations:
+      required: true
+
+  - type: input
+    id: recommend
+    attributes:
+      label: 개발팀 권고안
+      description: 어느 쪽을 권하는지와 한 줄 이유. 결정을 돕기 위한 것이며 강제는 아닙니다.
+      placeholder: "B안 — 확장성 우선. 동명이인은 핸들로 구분 가능"
+    validations:
+      required: false
+
+  - type: input
+    id: owner
+    attributes:
+      label: 결정 주체
+      description: 누가 결정하는가
+      placeholder: 회장단 / 총무 / 개발팀
+    validations:
+      required: true
+
+  - type: input
+    id: deadline
+    attributes:
+      label: 결정 기한
+      description: 이 날짜를 넘기면 권고안으로 진행합니다.
+      placeholder: 2026-08-09
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 결정되지 않으면 생기는 영향
+      description: 무엇이 막히는지 구체적으로. 이 항목이 결정 우선순위를 정합니다.
+      placeholder: |
+        - 회원 테이블 스키마 확정 불가 → MEM-01~05 개발 착수 불가
+        - M2(요구사항정의서 확정) 지연
+    validations:
+      required: true
+
+  - type: textarea
+    id: result
+    attributes:
+      label: 결정 결과
+      description: 결정 후 기록. ADR 번호를 함께 남깁니다.
+      placeholder: |
+        2026-08-08 회장단 회의에서 B안 채택.
+        → docs/decisions/0004-회원-학번-선택항목.md
+    validations:
+      required: false

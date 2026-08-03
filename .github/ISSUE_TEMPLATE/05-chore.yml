@@ -1,0 +1,75 @@
+name: ⚙️ Chore (인프라 · 문서 · 잡무)
+description: 기능이 아닌 작업 — 서버 구성 · 배포 · 문서 · 설정
+title: "[CHORE] "
+labels: ["type:chore"]
+type: Task
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 작업 종류
+      options:
+        - 인프라 (서버 · 컨테이너 · 배포)
+        - Supabase 설정 (프로젝트 · RLS · 백업)
+        - 모니터링 · 헬스체크
+        - 문서 작성 · 정리
+        - 인터뷰 · 자료 수집
+        - 개발 환경 · 설정
+        - 기타
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: 목적
+      description: 무엇을 위해 필요한가. 한 줄이면 충분합니다.
+      placeholder: 정전·물리장애로 앱이 죽었을 때 5분 내 감지하기 위해
+    validations:
+      required: true
+
+  - type: textarea
+    id: work
+    attributes:
+      label: 작업 내용
+      value: |
+        - [ ]
+        - [ ]
+      placeholder: |
+        - [ ] UptimeRobot 모니터 등록
+        - [ ] 헬스체크 엔드포인트 /health 구현
+        - [ ] 알림 채널 연결 (이메일 · 디스코드)
+    validations:
+      required: true
+
+  - type: textarea
+    id: rollback
+    attributes:
+      label: 실패 시 되돌리는 방법
+      description: |
+        **운영 환경을 건드리는 작업만** 채웁니다. 해당 없으면 "해당 없음".
+        되돌릴 수 없는 작업이면 그 사실을 명시하세요 — 사전 백업 근거가 됩니다.
+      placeholder: |
+        docker compose down 후 이전 이미지 태그로 재기동
+        (DB 마이그레이션 미포함이라 롤백 안전)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: security
+    attributes:
+      label: 보안 확인
+      description: 인프라·설정 작업만 해당. CLAUDE.md — "서비스 키는 저장소에 커밋 금지"
+      options:
+        - label: 인증정보를 저장소에 커밋하지 않았다
+        - label: 환경변수는 `.env.example` 에 키 이름만 기록했다
+        - label: 최소 권한으로 설정했다
+
+  - type: input
+    id: doc
+    attributes:
+      label: 문서화 위치
+      description: 인수인계를 위해 어디에 남길 것인가. 문서 작업이면 산출물 경로.
+      placeholder: docs/0600.플랫폼설계/운영_모니터링.md
+    validations:
+      required: true

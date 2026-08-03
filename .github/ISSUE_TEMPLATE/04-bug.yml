@@ -1,0 +1,90 @@
+name: 🐞 Bug (결함)
+description: 동작하지 않거나 잘못 동작하는 것
+title: "[BUG] "
+labels: ["type:bug"]
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **재현 절차가 없으면 고칠 수 없습니다.**
+        운영진이 발견한 문제도 이 템플릿으로 등록합니다.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 무슨 일이 일어났나
+      placeholder: 업무를 '검토'에서 '완료'로 바꾸면 승인 없이도 완료 처리된다
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 절차
+      description: 다른 사람이 그대로 따라 할 수 있게
+      value: |
+        1.
+        2.
+        3.
+      placeholder: |
+        1. 운영 업무 목록에서 아무 업무나 선택
+        2. 상태를 '검토'로 변경
+        3. 승인자 지정 없이 '완료' 버튼 클릭
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 기대 동작 (근거 포함)
+      description: 근거가 있으면 "결함인가 사양인가" 논쟁이 사라집니다.
+      placeholder: 승인자 승인 없이는 '완료'로 전환되지 않아야 한다 (BR-O05, OPS-010)
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 실제 동작
+      placeholder: 승인 없이 바로 '완료'로 변경되고 감사 로그에도 승인자가 비어 있다
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 심각도
+      description: Projects의 Priority 필드와 함께 우선순위를 정합니다
+      options:
+        - "Critical — 데이터 손실·유출, 권한 우회, 서비스 중단"
+        - "High — 핵심 기능 불가, 우회 방법 없음"
+        - "Medium — 기능 오류, 우회 방법 있음"
+        - "Low — 표시 오류, 오탈자, 불편"
+    validations:
+      required: true
+
+  - type: input
+    id: env
+    attributes:
+      label: 발생 환경
+      placeholder: "개발서버 · Chrome 130 / 모바일 Safari"
+    validations:
+      required: true
+
+  - type: input
+    id: related
+    attributes:
+      label: 관련 요구사항 ID
+      description: 어느 기능의 결함인지. 모르면 비워둡니다.
+      placeholder: OPS-010
+    validations:
+      required: false
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 증적
+      description: 스크린샷 · 로그. **개인정보는 가려서 첨부하세요.**
+    validations:
+      required: false

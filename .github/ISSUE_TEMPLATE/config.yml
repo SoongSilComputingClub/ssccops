@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📋 칸반 보드
+    url: https://github.com/orgs/SoongSilComputingClub/projects
+    about: 진행 현황은 여기서 확인하세요
+  - name: 📖 이슈 · 칸반 운영 가이드
+    url: https://github.com/SoongSilComputingClub/ssccops/blob/main/docs/ISSUE_TEMPLATE_가이드.md
+    about: 어떤 템플릿을 언제 쓰는지, Projects 필드를 어떻게 채우는지

@@ -1,0 +1,65 @@
+name: 🗂️ Epic
+description: 여러 이슈를 묶는 상위 목표 단위 (Jira의 Epic에 해당)
+title: "[EP-] "
+labels: ["type:epic"]
+type: Epic
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Epic은 **직접 작업하지 않습니다.** 하위 이슈를 묶어 진행률을 보는 용도입니다.
+
+        생성 후 하단 **Sub-issues** 영역에서 하위 이슈를 추가하세요.
+        Projects 보드에서 Epic 단위 진행률이 자동 집계됩니다.
+
+  - type: input
+    id: epic_id
+    attributes:
+      label: Epic ID
+      description: RFP 3.0.1에 정의된 Epic ID
+      placeholder: EP-O2
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: 업무 목표
+      description: 이 Epic이 달성하려는 운영상의 목표. 기능 나열이 아니라 목표를 씁니다.
+      placeholder: 승인 없는 완료를 차단하고 처리 이력을 남긴다
+    validations:
+      required: true
+
+  - type: dropdown
+    id: problem
+    attributes:
+      label: 대응하는 핵심 문제
+      description: CLAUDE.md의 3대 구조적 결핍 중 무엇을 푸는가
+      options:
+        - "① 단일 데이터 원천(SSoT) 부재"
+        - "② 검수·승인 프로세스 부재"
+        - "③ 문서화·인수인계 부재"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 포함 범위
+      description: 어떤 요구사항 ID들이 이 Epic에 속하는가
+      placeholder: |
+        OPS-010 ~ OPS-014 (상태 전이·승인)
+        대응 RFP 절: 3.2, 3.3
+    validations:
+      required: true
+
+  - type: textarea
+    id: done
+    attributes:
+      label: Epic 완료 조건
+      description: 하위 이슈가 다 닫히는 것 외에, 이 Epic이 끝났다고 볼 기준
+      placeholder: |
+        - [ ] 승인 없이 완료 처리가 불가능함을 UAT로 검증
+        - [ ] 모든 상태 전환이 감사 로그에 기록됨
+    validations:
+      required: true
