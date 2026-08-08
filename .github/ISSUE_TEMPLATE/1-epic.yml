@@ -1,22 +1,26 @@
 name: 🗂️ Epic
 description: 여러 이슈를 묶는 상위 목표 단위 (Jira의 Epic에 해당)
-title: "[EP-] "
-labels: ["type:epic"]
+title: "[EPIC] "
 type: Epic
 body:
   - type: markdown
     attributes:
       value: |
-        Epic은 **직접 작업하지 않습니다.** 하위 이슈를 묶어 진행률을 보는 용도입니다.
+        Epic은 **직접 작업하지 않습니다.** 하위 Story·Task·Bug를 묶어 진행률을 보는 용도입니다.
+        (Sub-task를 바로 밑에 달지 않습니다 — 계층은 Epic → Story/Task/Bug → Sub-task입니다.)
 
         생성 후 하단 **Sub-issues** 영역에서 하위 이슈를 추가하세요.
         Projects 보드에서 Epic 단위 진행률이 자동 집계됩니다.
+        하위 Story의 실제 구현(Sub-task)까지는 이 진행률에 잡히지 않으니,
+        완료 여부는 Story가 실제로 Done 되었는지로 판단하세요.
 
   - type: input
     id: epic_id
     attributes:
-      label: Epic ID
-      description: RFP 3.0.1에 정의된 Epic ID
+      label: RFP Epic ID (문서 참조용)
+      description: |
+        RFP 3.0.1에 정의된 Epic ID. 이 이슈를 추적하는 고유 식별자는 GitHub 이슈 번호(#)이며,
+        이 필드는 RFP 문서와 대조하기 위한 참조용입니다.
       placeholder: EP-O2
     validations:
       required: true

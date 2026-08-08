@@ -1,7 +1,6 @@
 name: 🐞 Bug (결함)
 description: 동작하지 않거나 잘못 동작하는 것
 title: "[BUG] "
-labels: ["type:bug"]
 type: Bug
 body:
   - type: markdown
@@ -75,8 +74,8 @@ body:
   - type: input
     id: related
     attributes:
-      label: 관련 요구사항 ID
-      description: 어느 기능의 결함인지. 모르면 비워둡니다.
+      label: 관련 요구사항 ID (문서 참조용)
+      description: 어느 기능의 결함인지 SRS 요구사항 ID로. 모르면 비워둡니다.
       placeholder: OPS-010
     validations:
       required: false
@@ -86,5 +85,14 @@ body:
     attributes:
       label: 증적
       description: 스크린샷 · 로그. **개인정보는 가려서 첨부하세요.**
+    validations:
+      required: false
+
+  - type: input
+    id: fix_subissue
+    attributes:
+      label: 수정 Sub-task (개발 레포, 코드 수정만)
+      description: 실제 수정 작업이 진행되는 개발 레포 Sub-task 이슈. 아직 없으면 비워둡니다.
+      placeholder: "ssccops-server#42"
     validations:
       required: false

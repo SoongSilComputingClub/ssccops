@@ -1,27 +1,15 @@
 # SSCC 운영관리시스템 라벨 정의
 # 일괄 생성: scripts/setup-github.sh 실행
-
-# ─── type: 무슨 일인가 ───────────────────────────────
-# GitHub Issue Types(Epic/Feature/Task/Bug)와 병행 사용.
-# Issue Type은 조직 설정에서 만들고, 라벨은 필터·색상 구분용.
-- name: "type:epic"
-  color: "5319E7"
-  description: "Epic — 하위 이슈를 묶는 상위 목표"
-- name: "type:story"
-  color: "0E8A16"
-  description: "Story — 사용자 관점 요구사항 (칸반 기본 카드)"
-- name: "type:task"
-  color: "A2EEEF"
-  description: "Task — Story를 쪼갠 작업 단위"
-- name: "type:bug"
-  color: "D73A4A"
-  description: "결함"
-- name: "type:chore"
-  color: "EEEEEE"
-  description: "인프라·문서·설정"
-- name: "type:decision"
-  color: "D93F0B"
-  description: "결정 필요 (ADR 후보)"
+#
+# 라벨은 domain:* 뿐이다. 나머지 축은 전부 GitHub 네이티브 기능으로 대체했다:
+#   - type(Epic/Story/Task/Bug/Subtask) → 조직 커스텀 Issue Type (뱃지·`type:Bug` 검색 제공)
+#   - priority(P0~P3, 이전 wont)        → Projects `Priority` 필드 (P0/P1/P2/P3/Won't)
+#   - status(blocked/in-review)        → Projects `Status` 필드 (Blocked/In Review 옵션)
+#   - "결정 필요"                       → 라벨 대신 이슈 제목 `[DECISION]` 접두어로 구분
+#     (Projects Status 필드에 "결정 대기"에 대응하는 옵션이 없어서 나온 유일한 예외 처리다.
+#      자세한 내용은 GITHUB_PROJECTS_설계안.md 4절, ISSUE_TEMPLATE_가이드.md 6절 참조)
+# domain:*만 라벨로 남긴 이유: 요구사항 ID 접두어와 1:1로 대응해 이슈 검색(`label:domain:OPS`)에
+# 쓰이는데, Projects 필드는 이슈 목록 검색에 걸리지 않는다.
 
 # ─── domain: 어느 영역인가 (요구사항 ID 체계와 1:1) ────
 - name: "domain:AUTH"
@@ -54,31 +42,3 @@
 - name: "domain:DOC"
   color: "C5DEF5"
   description: "문서화"
-
-# ─── priority: MoSCoW ────────────────────────────────
-- name: "P0:must"
-  color: "B60205"
-  description: "MVP 필수 — 없으면 시연 불가"
-- name: "P1:must"
-  color: "D93F0B"
-  description: "MVP 필수 — Phase 1 내 완료"
-- name: "P2:should"
-  color: "FBCA04"
-  description: "있으면 좋음 — Phase 2"
-- name: "P3:could"
-  color: "C2E0C6"
-  description: "여유 시 — Phase 3"
-- name: "wont"
-  color: "EEEEEE"
-  description: "이번 범위 제외 (근거 기록용)"
-
-# ─── status: 흐름 ────────────────────────────────────
-- name: "status:blocked"
-  color: "FEF2C0"
-  description: "다른 결정·자료를 기다림"
-- name: "status:needs-decision"
-  color: "FBCA04"
-  description: "운영진 확정 필요"
-- name: "status:in-review"
-  color: "FEF2C0"
-  description: "검토 중"

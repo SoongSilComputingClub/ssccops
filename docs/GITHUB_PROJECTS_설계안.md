@@ -1,9 +1,58 @@
 # SSCC 통합 운영관리시스템 — Git 프로젝트 관리 설계안
 
-> **작성일**: 2026-08-03
+> **작성일**: 2026-08-03 (개정: 2026-08-07 — 레포 역할 재정의)
 > **작성 목적**: Teams 문서 관리에서 Git 기반 관리로 전환하기 위한 저장소 구조·마일스톤·이슈 체계 설계
 > **적용 대상**: 설계 단계(현재) → 개발 단계(8월) → 운영 단계
 > **문서 상태**: 검토용 초안 — 실제 저장소 생성 전 검토 필요
+
+---
+
+## 0. 이 레포(ssccops)의 역할 — 최상위 관리 전용
+
+`ssccops`는 **코드를 담지 않는다.** 문서와 Jira형 이슈(Epic·Story·Task·Bug·Sub-task)만 다루는
+**최상위 프로젝트 관리 레포**다. 실제 코드 구현만 도메인별 개발 레포에서 진행한다.
+
+```
+ssccops                     ← 관리 전용 (이 레포)
+│  문서 · Epic/Story/Task/Bug
+│  + Sub-task (코드가 아닐 때만 — 인터뷰·자료 취합 등)
+│
+├──▶ ssccops-server         ← 백엔드 개발 레포 (Spring)
+│      브랜치 · 커밋 · PR · Sub-task (코드 구현)
+│
+└──▶ ssccops-web (예정)      ← 프론트엔드 개발 레포
+       브랜치 · 커밋 · PR · Sub-task (코드 구현)
+```
+
+**이슈 계층 (Epic → Story/Task/Bug → Sub-task)**은 GitHub 조직에 등록한 **커스텀 Issue Type**으로
+그대로 구현한다 — `Epic`·`Story`·`Task`·`Bug`·`Subtask` 다섯 개 모두 실제 GitHub Issue Type이다
+(GitHub 기본 제공은 `Bug`/`Feature`/`Task`뿐이라, `Epic`·`Story`·`Subtask`는 조직 설정에서 추가했다).
+
+**어느 레포에 만드나**:
+
+| Jira 개념 | Issue Type | 만드는 곳 | 비고 |
+|---|---|---|---|
+| Epic | `Epic` | `ssccops`만 | RFP의 `EP-*` 단위 |
+| Story | `Story` | `ssccops`만 | 요구사항 ID 1개 = Story 1개 |
+| Task | `Task` | `ssccops`만 | Story에 속하지 않는 독립 작업 (인프라·문서·설정) |
+| Bug | `Bug` | `ssccops`만 | 결함 접수. 운영진도 여기에 등록 |
+| **Sub-task** | `Subtask` | **코드면 개발 레포, 아니면 `ssccops`** | 아래 설명 |
+
+**Sub-task만 기준이 다르다** — "어느 레포냐"가 아니라 "**코드냐 아니냐**"로 가른다.
+
+- **코드 구현**(DB·API·화면 단위 작업) → **개발 레포**(`ssccops-server` 등)에 Sub-task 생성,
+  GitHub Sub-issues(cross-repo)로 `ssccops`의 Story/Task를 Parent 지정
+- **코드가 아닌 실행 단위**(인터뷰 개별 건, 문서 하위 항목, 자료 취합 등) → **`ssccops`에 그대로**
+  Sub-task 생성, 같은 레포 안에서 Story/Task를 Parent 지정
+
+> 예: Epic `2차 인터뷰` → Task `인터뷰 진행` → Sub-task `총무 인터뷰`·`학술국장 인터뷰`… (전부 `ssccops`,
+> 코드가 아니므로). Epic `상태·승인 통제` → Story `업무 상태 전이 관리` → Sub-task `상태 전이 API`
+> (`ssccops-server`, 코드이므로). 9절에 두 예시를 모두 실었다.
+>
+> 왜 코드만 개발 레포로 보내나: `ssccops`는 여러 개발 레포를 아우르는 상위 추적 지점이어야 한다.
+> 실작업(DB·API·화면 단위 커밋)을 이 레포에 두면 개발 레포가 늘어날수록(백엔드·프론트엔드·추후 인프라 레포 등)
+> 이 레포가 코드 저장소처럼 비대해지고, 정작 "전체가 지금 어디까지 왔는가"를 보기 어려워진다.
+> 코드가 아닌 Sub-task는 그런 문제가 없으므로 굳이 레포를 나눌 이유가 없다.
 
 ---
 
@@ -25,18 +74,17 @@ Teams 문서함은 파일 보관에는 문제가 없지만, 지금 프로젝트�
 
 ## 2. 저장소 구조
 
-### 2.1 저장소 전략: 문서 저장소로 시작 → 코드 추가
+### 2.1 `ssccops` 레포 구조 — 문서 + 이슈 전용
 
 ```
 ssccops  (SoongSilComputingClub/ssccops)
 │
 ├── README.md                    # 프로젝트 개요 · 문서 지도 · 현재 단계
-├── CLAUDE.md                    # 기존 파일 이동
 ├── .github/
-│   ├── ISSUE_TEMPLATE/          # 이슈 양식 (5종)
-│   ├── PULL_REQUEST_TEMPLATE.md
+│   ├── ISSUE_TEMPLATE/          # 이슈 양식 (5종: Epic·Story·Task(결정 필요 포함)·Subtask·Bug)
+│   ├── PULL_REQUEST_TEMPLATE.md # 문서 PR용
 │   ├── labels.yml               # 라벨 정의 (일괄 생성용)
-│   └── workflows/               # (개발 단계에서 CI 추가)
+│   └── workflows/               # (필요 시 문서 린트 등)
 │
 ├── docs/                        # ← Teams 폴더 구조를 그대로 이식
 │   ├── 0000.ref/                # 참고자료 (회칙, 기존 시스템 자료)
@@ -57,12 +105,12 @@ ssccops  (SoongSilComputingClub/ssccops)
 │   ├── 0600.플랫폼설계/          # ERD, API 명세, 화면 설계
 │   └── decisions/               # ADR — 아래 2.3 참조
 │
-├── scripts/                     # 운영 스크립트 (setup, 문서 변환 등)
-│
-└── apps/                        # ← 8월 개발 착수 시 추가
-    ├── backend/
-    └── frontend/
+└── scripts/                     # 운영 스크립트 (라벨 생성 등)
 ```
+
+**`apps/backend`, `apps/frontend`는 이 레포에 두지 않는다.** 코드는 `ssccops-server`(백엔드),
+추후 만들 프론트엔드 레포에 각자 존재한다. `CLAUDE.md`처럼 개발에 필요한 규칙 문서도
+해당 개발 레포에 둔다 — 실제로 `ssccops-server`에는 이미 자체 `CLAUDE.md`가 있다.
 
 ### 2.2 Teams 폴더를 그대로 쓰는 이유
 
@@ -72,6 +120,7 @@ ssccops  (SoongSilComputingClub/ssccops)
 ### 2.3 ADR(Architecture Decision Record) — 결정 기록
 
 `docs/decisions/` 에 결정 하나당 파일 하나. **CLAUDE.md의 "문서화·인수인계 부재" 문제를 직접 해결하는 장치**다.
+아키텍처·기술 스택 결정뿐 아니라, 개발 레포에서 내린 결정도 여기 옮겨 **전체 프로젝트의 결정 기록을 한곳에 모은다.**
 
 ```
 docs/decisions/
@@ -111,6 +160,8 @@ DB와 인증은 Supabase(PostgreSQL + Auth)를 사용하고, 애플리케이션�
 ## 3. 마일스톤 설계
 
 워터폴 한 사이클(요구사항 → 설계 → 개발 → 테스트 → 이행)을 마일스톤 7개로 나눈다.
+마일스톤은 `ssccops`에서 관리하며, **개발 레포의 실제 작업 완료 여부로 진행률을 판단**한다
+(예: M4는 `ssccops-server`의 관련 Sub-issue가 전부 닫혔는지로 확인).
 
 **마일스톤은 단계, 이슈는 산출물**로 역할을 나눈다.
 RFP v1.0·SRS 같은 문서명은 마일스톤 이름·설명에 넣지 않고 이슈로 추적한다.
@@ -122,7 +173,7 @@ RFP v1.0·SRS 같은 문서명은 마일스톤 이름·설명에 넣지 않고 �
 | **M1** | 요구사항 분석 | 2026-08-09 | 미결정 5개 항목(회원 필수 필드, 승인 규칙, 개인정보 항목, 이관 대상, 적용 일정) 확정 · 요구사항 범위·우선순위 확정 · 운영진 승인 |
 | **M2** | 요구사항 정의 | 2026-08-11 | 기능 ID별 수용 기준(AC) 작성 · Must/Should/Could 확정 · 요구사항 추적 매트릭스 완성 |
 | **M3** | 시스템 설계 | 2026-08-13 | ERD · 테이블 정의 · API 명세 · 화면 흐름 · 권한 매트릭스 · RLS 정책 확정 |
-| **M4** | 개발 (MVP) | 2026-08-14 | 인증·회원·운영업무 승인·감사로그가 **실제 데이터로** 동작 |
+| **M4** | 개발 (MVP) | 2026-08-14 | 인증·회원·운영업무 승인·감사로그가 **실제 데이터로** 동작 (개발 레포 Sub-issue 기준) |
 | **M5** | 테스트 및 안정화 | 2026-08-28 | 최소 2주 UAT · 시나리오 테스트 · 권한/보안 점검 · 성능 확인 · 결함 처리 |
 | **M6** | 이행 및 오픈 | 2026-09-05 | 기존 데이터 이관 · 운영진 교육 · 운영 문서(설치·운영·장애대응·데이터구조·권한·인수인계) 완비 · 정식 오픈 |
 
@@ -131,7 +182,7 @@ RFP v1.0·SRS 같은 문서명은 마일스톤 이름·설명에 넣지 않고 �
 CLAUDE.md의 Phase 2(운영 확장)·Phase 3(자동화·지능화)는 **다음 사이클**이다.
 워터폴에서 마일스톤은 이번 사이클의 단계를 뜻하므로, 테스트·이행 뒤에 다시 개발 마일스톤이 오면 순서가 깨진다.
 
-Phase 2·3 항목은 **이슈로 등록하되 마일스톤 없이 `P2:should` / `P3:could` 라벨만** 붙여 백로그에 쌓는다.
+Phase 2·3 항목은 **이슈로 등록하되 마일스톤 없이 Projects Priority 필드를 `P2` / `P3`로만** 두고 백로그에 쌓는다.
 Phase 2를 실제로 착수할 때 `M7. 요구사항 정의 (Phase 2)`부터 새 마일스톤을 만들고 해당 이슈를 옮긴다.
 
 > 디스코드 연동·AI 검수도 분명한 개발 작업이다.
@@ -156,25 +207,30 @@ GitHub 마일스톤은 기한이 없으면 **생성 역순**으로 정렬되어 
 
 ---
 
-## 4. 라벨 체계
+## 4. 라벨 체계 — `domain:*` 하나만 남긴다
 
-라벨은 **4개 축**으로 나눈다. 색상으로 축을 구분해 목록에서 한눈에 읽히게 한다.
+라벨은 이제 **domain 축 하나**뿐이다. 예전엔 type·priority·status까지 4개 축을 라벨로
+관리했지만, GitHub 네이티브 기능이 그 역할을 이미 제공해서 하나씩 걷어냈다.
 
-### 4.1 type — 무슨 일인가 (파란 계열)
-
-| 라벨 | 색상 | 용도 |
+| 예전 축 | 지금은 어디서 | 왜 라벨을 걷었나 |
 |---|---|---|
-| `type:epic` | `#5319E7` | Epic — 하위 이슈를 묶는 상위 목표 |
-| `type:story` | `#0E8A16` | Story — 사용자 관점 요구사항 (칸반 기본 카드) |
-| `type:task` | `#A2EEEF` | Task — Story를 쪼갠 작업 단위 |
-| `type:bug` | `#D73A4A` | 결함 |
-| `type:chore` | `#EEEEEE` | 인프라·문서·설정 |
-| `type:decision` | `#D93F0B` | 결정 필요 (ADR 후보) |
+| `type:*` (Epic/Story/Task/Bug) | **Issue Type** | 조직 커스텀 타입으로 이미 뱃지·`type:Bug` 검색 제공 |
+| `P0:must`~`P3:could` | **Projects `Priority` 필드** | 필드가 이슈 사이드바에 바로 뜨고 보드 정렬에도 쓰임 |
+| `wont` | **Projects `Priority` 필드의 `Won't` 옵션** | Priority 필드에 옵션 하나 추가하는 것으로 충분 |
+| `status:blocked` / `status:in-review` | **Projects `Status` 필드** | Status 필드에 이미 `Blocked`/`In Review` 컬럼이 있음 |
+| `status:needs-decision` | **이슈 제목의 `[DECISION]` 접두어** | 유일한 예외 — 아래 설명 |
 
-> GitHub **Issue Types**(Epic/Feature/Task/Bug)와 병행한다.
-> Issue Type은 조직 설정에서 만들고 계층 표시에 쓰이며, 라벨은 검색·색상 구분용이다.
+**`status:needs-decision`만 필드로 완전히 대체되지 않는다.** Projects `Status` 필드는
+Backlog/Todo/In Progress/In Review/Blocked/Done, 즉 **작업 진행 단계**를 나타내는 축이라
+"운영진의 결정을 기다린다"는 별개의 의미를 넣을 자리가 없다(억지로 넣으면 "Blocked"와
+뜻이 겹쳐버린다). 그렇다고 라벨 하나만 남기는 것도 어색해서, `2-task.yml`(작업 종류: 결정
+필요) 이슈가 항상 제목에 붙이는 **접두어 `[DECISION]`**으로 대신한다 — "운영진 확인 대기"
+뷰는 라벨 필터 대신 제목에 `[DECISION]`이 포함된 이슈로 필터링한다 (8절).
 
-### 4.2 domain — 어느 영역인가 (CLAUDE.md의 요구사항 ID 체계와 1:1)
+domain만 라벨로 남긴 이유는 단순하다 — **Projects 필드는 이슈 목록·검색에 안 걸리는데**,
+domain은 `label:domain:OPS`처럼 검색에 실제로 쓰기 때문이다.
+
+### 4.1 domain — 어느 영역인가 (CLAUDE.md의 요구사항 ID 체계와 1:1)
 
 | 라벨 | 도메인 |
 |---|---|
@@ -191,48 +247,38 @@ GitHub 마일스톤은 기한이 없으면 **생성 역순**으로 정렬되어 
 
 색상은 모두 `#C5DEF5`로 통일 — 도메인은 분류일 뿐 우선순위가 아니다.
 
-### 4.3 priority — MoSCoW (빨강~회색 그라데이션)
-
-| 라벨 | 색상 | 의미 |
-|---|---|---|
-| `P0:must` | `#B60205` | MVP 필수. 없으면 시연 불가 |
-| `P1:must` | `#D93F0B` | MVP 필수. Phase 1 내 완료 |
-| `P2:should` | `#FBCA04` | 있으면 좋음. Phase 2 |
-| `P3:could` | `#C2E0C6` | 여유 시. Phase 3 |
-| `wont` | `#EEEEEE` | 이번 범위 제외 (근거 기록용) |
-
-> `wont` 라벨을 두는 이유: CLAUDE.md의 **범위 통제** 원칙 때문이다.
-> 제외된 요구사항을 이슈로 남기고 `wont`을 붙여 닫으면, 나중에 "이거 왜 없어요?"에 답할 근거가 된다.
-
-### 4.4 status — 흐름 (노랑 계열)
-
-| 라벨 | 의미 |
-|---|---|
-| `status:blocked` | 다른 결정·자료를 기다림 |
-| `status:needs-decision` | 운영진 확정 필요 |
-| `status:in-review` | 검토 중 |
-
-### 4.5 담당
+### 4.2 담당
 
 GitHub의 **Assignee**를 쓰고 라벨은 만들지 않는다. 다만 Task 시트 분담(개발자A: 회원·운영·데이터 / 개발자B: 스터디·공지·AI검수·폼·회의준비)은 domain 라벨로 자연히 갈린다.
 
 ---
 
-## 5. 이슈 템플릿 (6종)
+## 5. 이슈 템플릿 (5종)
 
 `.github/ISSUE_TEMPLATE/` 아래 YAML 폼으로 작성한다.
 자유 서술식(Markdown 템플릿)보다 **입력 폼**이 낫다 — 필수 항목을 비워둘 수 없기 때문이다.
 
-Jira 스타일 칸반을 목표로, **Epic → Story → Task** 계층을 GitHub Sub-issues로 구현한다.
+Jira 스타일 칸반을 목표로, **Epic → Story/Task/Bug → Sub-task** 계층을 GitHub Sub-issues로 구현한다.
+Sub-issues는 다른 레포의 이슈도 자식으로 연결할 수 있어, `ssccops`의 Story가 `ssccops-server`의
+Sub-task를 자식으로 갖는 **cross-repo 계층**도, `ssccops` 안에서만 완결되는 계층도 둘 다 가능하다.
 
 | 파일 | 이슈 종류 | Issue Type | 칸반에서 |
 |---|---|---|---|
-| `01-epic.yml` | 🗂️ Epic | Epic | 보드에 안 올림 (진행률만) |
-| `02-story.yml` | 📌 Story (요구사항) | Feature | **기본 카드** |
-| `03-task.yml` | 🔧 Task (작업) | Task | 필요할 때만 |
-| `04-bug.yml` | 🐞 Bug | Bug | 기본 카드 |
-| `05-chore.yml` | ⚙️ Chore (인프라·문서) | Task | 기본 카드 |
-| `06-decision.yml` | ❓ 결정 필요 | — | 운영진 확인 대기 뷰 |
+| `1-epic.yml` | 🗂️ Epic | Epic | 보드에 안 올림 (진행률만) |
+| `2-story.yml` | 📌 Story (요구사항) | Story | **기본 카드** |
+| `2-task.yml` | 🔧 Task (독립 작업, "결정 필요" 포함) | Task | 필요할 때만 |
+| `3-subtask.yml` | 🔹 Sub-task | Subtask | 계층 최하단 (코드가 아닐 때만 여기서 생성) |
+| `2-bug.yml` | 🐞 Bug | Bug | 기본 카드 |
+
+**파일명 숫자 = 계층 깊이다.** 등록 순서가 아니라 Epic → Story/Task/Bug → Sub-task 몇 번째
+단인지를 가리킨다 — Epic은 1단이라 `1-`, Story·Task·Bug는 2단이라 전부 `2-`, Sub-task는
+Story/Task/Bug의 자식이라 3단이라 `3-`. 같은 숫자를 공유하는 파일(`2-bug`/`2-story`/`2-task`)의
+순서는 파일 이름 알파벳순으로 결정되며 기능에는 영향이 없다.
+
+> **별도의 "결정 필요" 템플릿은 없다.** `2-task.yml`의 "작업 종류"에서 **결정 필요**를
+> 고르면 선택지·권고안·결정 주체·기한·영향·결과 필드(전부 선택 입력)가 같이 딸려온다 —
+> 5.1절 원칙 ③ 참조. Issue Type이 이미 `Story`로 등록돼 있어 템플릿의 `type:` 값도
+> `Feature`가 아니라 `Story`로 맞췄다.
 
 **보드 구성·필드·자동화·운영 규칙은 [`ISSUE_TEMPLATE_가이드.md`](ISSUE_TEMPLATE_가이드.md)에 정리했다.**
 
@@ -251,62 +297,114 @@ RFP에 이미 Given-When-Then 형식으로 정의되어 있어, 새로 쓰는 �
 변하지 않는 정보(요구사항 ID·AC·재현 절차)만 템플릿에 두고,
 자주 바뀌는 값(Status·Priority·Size·Iteration)은 보드에서 관리한다.
 
-**③ 결정 이슈는 선택지와 기한을 강제한다**
+**③ "결정 필요"는 별도 타입도, 별도 파일도 아니다 — Task에 흡수한다**
 
-"이거 어떻게 할까요?"로 끝나는 이슈는 방치된다.
-선택지 2개 이상 + 결정 기한 + 결정하지 않으면 생기는 영향을 필수 입력으로 받는다.
+Jira 표준 타입(Epic/Story/Task/Bug/Sub-task)에는 "Decision"이 없다. 실무에서도 별도 타입을
+새로 만들기보다 Task/Story에 목적 라벨(`decision`, `rfc`, `spike`)만 얹는 경우가 많다.
+
+처음엔 `06-decision.yml`이라는 **별도 파일**로 뒀지만(같은 Issue Type `Task`, 폼만 분리),
+결국 "결정 필요"도 Task의 한 종류일 뿐이라 별도 파일을 유지할 이유가 없어 없앴다.
+지금은 `2-task.yml` 하나에 "작업 종류" 드롭다운의 옵션으로 **결정 필요**를 추가하고,
+선택지·권고안·결정 주체·결정 기한·영향·결정 결과 필드를 **전부 선택 입력**으로 같이 넣었다.
+"이거 어떻게 할까요?"로 끝나는 이슈가 방치되지 않도록 이 필드들로 유도하는 게 목적이지,
+모든 Task에 강제하는 건 아니다 — 인프라·문서 작업이면 그냥 비워둔다. 결정 필요 항목임을
+표시하는 건 결국 **제목 접두어 `[DECISION]`**이다(4절·6절 참조).
+
+**④ Sub-task는 Task의 자식이 아니라 진짜 4번째 계층이다**
+
+한때는 Sub-task를 이 레포에서 아예 안 만들기로 했었다 — GitHub에 `Subtask`라는 Issue Type이
+없던 시절엔 "Task를 Task의 자식으로 중첩"하는 임시방편도 검토했지만, 그러면 Jira와 달리
+계층이 한없이 깊어질 수 있어 Epic → Story/Task/Bug → Sub-task라는 4단 계층이 무너진다.
+
+조직에 `Subtask` Issue Type을 커스텀으로 등록하면서 이 문제를 근본적으로 풀었다.
+Sub-task는 항상 Story·Task·Bug의 자식이고, 스스로 자식을 가질 수 없다. `ssccops`의 Task는
+여전히 Story에 속하지 않는 독립 작업(인프라·문서·설정·인터뷰 등, 이전의 `Chore`)을 가리키되,
+그 Task를 더 쪼개야 하면 — 코드면 개발 레포에, 코드가 아니면 `ssccops`에 — Sub-task를 만들어
+Parent로 지정한다. 자세한 흐름은 6절 참조.
+
+**⑤ 고유 식별자는 GitHub 이슈 번호다 — 수동 채번을 하지 않는다**
+
+이전 버전은 `OPS-010`처럼 도메인별 순번을 사람이 직접 매겼다. 하지만 GitHub은 이슈마다
+저장소 내 고유 번호(`#87`)를 이미 자동으로 부여한다. 별도 채번 체계를 유지하면
+"다음 번호가 몇 번이었더라"를 사람이 관리해야 하고, 커밋·PR에 적어도 GitHub이 자동으로
+링크해주지 않는다(`(OPS-010)`은 그냥 텍스트, `(#87)`은 실제 이슈로 하이퍼링크된다).
+그래서 제목은 `[도메인 또는 타입] 설명` 형식(예: `[OPS] 업무 상태 전이 관리`)만 쓰고,
+추적은 GitHub 이슈 번호로 한다. `docs/0500.요구사항정의서/`에 이미 존재하는 `OPS-010` 같은
+SRS 요구사항 ID는 없애지 않는다 — 다만 그 역할은 "GitHub 밖의 문서(SRS·ERD·API 명세)를
+서로 잇는 문서 참조 ID"로 좁히고, 본문의 별도 필드(`요구사항 ID`)에만 기록한다.
 
 ---
 
-## 6. 요구사항 ID ↔ 이슈 추적
+## 6. 이슈 ↔ 문서 ↔ 개발 레포 추적 (레포 간)
 
 CLAUDE.md는 *"코드·DB·테스트·문서에서 이 ID로 추적 가능하게 유지한다"* 고 요구한다.
-이를 실제로 작동시키는 방법:
+이 요구를 만족시키는 축은 두 개다.
+
+- **문서 사이의 추적**(SRS ↔ ERD ↔ API 명세)은 여전히 `OPS-010` 같은 **SRS 요구사항 ID**로 한다.
+  이 ID는 GitHub 이전에 요구사항정의서에서 먼저 확정되고, 문서 여러 개를 서로 잇는 데 쓴다.
+- **이슈 사이의 추적**(Story ↔ Sub-issue ↔ 브랜치 ↔ 커밋 ↔ PR)은 **GitHub 이슈 번호**로 한다.
+  번호는 사람이 매기지 않고 GitHub이 자동으로 부여하며, 커밋·PR에 적으면 자동으로 하이퍼링크된다.
+
+두 축은 Story 이슈 본문의 "요구사항 ID" 필드 하나로 연결된다 — Story를 열면 SRS 항목이 뭔지 보이고,
+SRS 항목에서 GitHub 이슈를 찾을 땐 요구사항 ID로 이슈를 검색(`OPS-010` 텍스트 검색)하면 된다.
 
 ```
-요구사항 ID           OPS-03
+[ssccops] Story #87            [OPS] 운영 업무 승인 워크플로
+                                본문 필드 "요구사항 ID": OPS-010  ← SRS 문서와 대조용
+    ↓  (Parent 지정, cross-repo Sub-issue)
+[ssccops-server] Sub-issue #42 [OPS] 승인 상태 전이 API
     ↓
-이슈 제목            [OPS-03] 운영 업무 승인 워크플로
+브랜치명 (개발 레포)            feat/42-approval-workflow          ← 이슈 번호 기반
     ↓
-브랜치명             feat/OPS-03-approval-workflow
+커밋 메시지 (개발 레포)         feat(OPS): 승인 상태 전이 검증 추가 (#42)
     ↓
-커밋 메시지          feat(OPS): 승인 상태 전이 검증 추가 (OPS-03)
+PR (개발 레포)                  [OPS] 승인 워크플로 구현 (#42)
     ↓
-PR 제목              [OPS-03] 승인 워크플로 구현
+PR 본문                        Closes #42
     ↓
-PR 본문              Closes #42
+[ssccops] Story #87            Sub-issue #42 종료 확인 후 Status를 Done으로 이동
     ↓
-문서                 docs/0500.요구사항정의서/ 의 OPS-03 항목
+문서 (ssccops)                 docs/0500.요구사항정의서/ 의 OPS-010 항목에 "완료 — ssccops#87" 기록
 ```
 
-**이슈 제목 규칙**: `[요구사항ID] 한 줄 설명`
-ID가 없는 작업(설계·잡무)은 `[DOC]`, `[CHORE]` 같은 접두어를 쓴다.
+**이슈 제목 규칙**: `[타입 또는 도메인] 한 줄 설명` — 번호를 직접 붙이지 않는다.
+예: `[EPIC] 상태·승인 통제`, `[OPS] 업무 상태 전이 관리`, `[TASK] 헬스체크 구현`, `[BUG] 승인 없이 완료 처리됨`.
+GitHub이 이슈 목록·브랜치·PR 어디서나 `#87`을 자동으로 붙여 보여주므로 제목에 넣을 필요가 없다.
+
+**개발 레포 쪽 브랜치·커밋 규칙은 각 개발 레포가 정한다** (예: `ssccops-server/CLAUDE.md`).
+`ssccops`가 강제하는 것은 하나뿐이다 — **커밋·PR·Sub-issue에 GitHub 이슈 번호(`#87`)를 반드시 포함할 것.**
+이 한 가지만 지키면 두 레포 사이의 추적이 끊기지 않는다.
 
 ---
 
 ## 7. 브랜치·커밋 전략
 
-### 7.1 설계 단계 (지금 ~ M3)
+### 7.1 `ssccops` (이 레포) — 문서 전용, 항상 단순하게
 
-문서만 다루므로 **단순하게 간다.**
+이 레포는 코드를 담지 않으므로 feature 브랜치 전략이 필요 없다.
 
 - `main` 직접 커밋 허용 (오탈자·서식 수정)
 - 문서의 **내용**이 바뀌는 작업만 브랜치 + PR
-  - 예: RFP 요구사항 추가/삭제, 요구사항 우선순위 변경
+  - 예: RFP 요구사항 추가/삭제, 요구사항 우선순위 변경, 이슈 템플릿·라벨 변경
 - PR 리뷰어는 상대 개발자(A ↔ B)
 
-### 7.2 개발 단계 (M4 ~)
+이 규칙은 M4 이후에도 바뀌지 않는다 — 개발이 시작돼도 `ssccops`에는 코드가 들어오지 않기 때문이다.
 
-- `main` 보호: 직접 push 금지, PR 필수, 리뷰 1인 승인
-- 브랜치: `feat/`, `fix/`, `docs/`, `chore/` + 요구사항 ID
-- 커밋: Conventional Commits + 도메인 스코프
+### 7.2 개발 레포 (`ssccops-server` 등)
+
+브랜치 보호·커밋 컨벤션·PR 규칙은 **각 개발 레포가 자체적으로 정한다.**
+`ssccops`는 이를 강제하지 않되, 추적성을 위해 아래 형식을 권장한다.
+
+- 브랜치: `feat/`, `fix/`, `docs/`, `chore/` + **GitHub 이슈 번호**
+- 커밋: Conventional Commits + 도메인 스코프 + **이슈 번호(`#`)** — 텍스트가 아니라 번호를 쓰면
+  GitHub이 커밋·PR을 해당 이슈에 자동으로 링크해준다.
   ```
-  feat(MEM): 회원 참여이력 조회 API 추가 (MEM-05)
-  fix(AUTH): 소셜 로그인 콜백 리다이렉트 오류 수정 (AUTH-02)
+  feat(MEM): 회원 참여이력 조회 API 추가 (#53)
+  fix(AUTH): 소셜 로그인 콜백 리다이렉트 오류 수정 (#61)
   docs(OPS): 승인 상태 전이표 갱신
   ```
 
-### 7.3 커밋하지 말아야 할 것
+### 7.3 커밋하지 말아야 할 것 (모든 레포 공통)
 
 `.gitignore`에 반드시 포함 — CLAUDE.md의 보안 원칙(*"서비스 키·환경변수는 저장소에 커밋 금지"*):
 
@@ -332,7 +430,9 @@ docs/**/*_원본.xlsx
 
 ## 8. GitHub Projects (칸반) 구성
 
-이슈만으로는 전체 흐름이 안 보인다. Projects(v2) 보드를 하나 만든다.
+이슈만으로는 전체 흐름이 안 보인다. **조직 수준** Projects(v2) 보드를 하나 만들어
+`ssccops`와 모든 개발 레포(`ssccops-server` 등)의 이슈를 함께 모은다 — 레포가 나뉘어도
+보드는 하나여야 "전체가 지금 어디까지 왔는가"가 보인다.
 
 **보드 이름**: `SSCC 운영시스템`
 
@@ -347,17 +447,18 @@ Backlog → Todo → In Progress → In Review → Done
 | 필드 | 타입 | 옵션 |
 |---|---|---|
 | Status | Single select | Backlog · Todo · In Progress · In Review · Blocked · Done |
-| Priority | Single select | P0 · P1 · P2 · P3 |
+| Priority | Single select | P0 · P1 · P2 · P3 · **Won't**(이번 범위 제외, 이전 `wont` 라벨 대체) |
 | Size | Single select | XS · S · M · L · XL |
 | Iteration | Iteration | 1주 단위 |
 | 담당 영역 | Single select | 개발자A · 개발자B · 운영진 |
 | Epic | Text | EP-O2 등 |
 
-**뷰 5개**: 칸반 · 이번 주 · Epic별 · 내 작업 · 운영진 확인 대기
+**뷰 5개**: 칸반 · 이번 주 · Epic별 · 내 작업 · 운영진 확인 대기(제목에 `[DECISION]` 포함 필터, 4절 참조)
 
-**자동화**: `Auto-add to project`(필수) · PR 머지 시 Done · 재오픈 시 Todo
+**자동화**: `Auto-add to project`(필수, **레포별로 각각 등록** — `ssccops` + `ssccops-server` + 추후 레포) · PR 머지 시 Done · 재오픈 시 Todo
 
-> 필드 옵션·뷰 필터·자동화 설정 방법은 [`ISSUE_TEMPLATE_가이드.md`](ISSUE_TEMPLATE_가이드.md) 4절에 상세히 정리했다.
+> 필드 옵션·뷰 필터·자동화 설정 방법, 그리고 Sub-issue가 cross-repo로 보드에 어떻게 나타나는지는
+> [`ISSUE_TEMPLATE_가이드.md`](ISSUE_TEMPLATE_가이드.md) 4절에 상세히 정리했다.
 
 ---
 
@@ -367,34 +468,43 @@ Backlog → Todo → In Progress → In Review → Done
 
 ### M0 — 요구사항 수집
 
-전부 `05-chore` 템플릿(종류: 인터뷰·자료 수집)으로 등록한다.
+**Epic → Task → Sub-task** 3단으로 등록한다. 인터뷰는 코드가 아니므로 전부 `ssccops`
+안에서 끝난다 — 개발 레포로 보낼 필요가 없다 (5.1절 원칙④).
 
-| 제목 | 라벨 | 담당 |
+```
+🗂️ [EPIC] 2차 인터뷰                         type: Epic
+   └── 🔧 [TASK] 인터뷰 진행                  type: Task, domain:OPS, Priority: P0, 담당: 개발자A+B
+          ├── 🔹 [SUB] 총무 인터뷰 (30분)      type: Subtask, 담당: 개발자B
+          ├── 🔹 [SUB] 학술국장 인터뷰 (30분)   type: Subtask, 담당: 개발자B
+          ├── 🔹 [SUB] 기획국장 인터뷰 (30분)   type: Subtask, 담당: 개발자B
+          ├── 🔹 [SUB] 운영진 부원 인터뷰 (30분) type: Subtask, 담당: 개발자B
+          ├── 🔹 [SUB] 회장 인터뷰 (60분)       type: Subtask, 담당: 개발자A
+          ├── 🔹 [SUB] 부회장 인터뷰 (60분)     type: Subtask, 담당: 개발자A
+          ├── 🔹 [SUB] 홍보국장 인터뷰 (60분)   type: Subtask, 담당: 개발자A
+          └── 🔹 [SUB] 행정국장 인터뷰 (60분)   type: Subtask, 담당: 개발자A
+   └── 🔧 [TASK] 서면 요청 자료 취합 (4개 직책 × 14~15건)   type: Task, domain:DOC, Priority: P1, 담당: 개발자B
+```
+
+Sub-task 8건을 만든 뒤 각각 **Parent issue**에 `[TASK] 인터뷰 진행`을 지정하면,
+Epic·Task 어느 뷰에서 봐도 "8건 중 몇 건 끝났는지"가 진행률로 바로 보인다.
+Task/Sub-task 둘 다 `domain:OPS`~`domain:MEM` 등 실제 담당 인터뷰 대상에 맞는 라벨을 붙이고,
+Priority는 Projects 필드(P0)로 등록 직후 채운다.
+
+### M1 — 요구사항 분석 (미결정 5개 = 결정 이슈, `2-task.yml`을 작업 종류 "결정 필요"로 등록)
+
+| 제목 | 라벨 | Projects Priority |
 |---|---|---|
-| `[CHORE] 총무 2차 인터뷰 (30분)` | `type:chore` `domain:OPS` `P0:must` | 개발자B |
-| `[CHORE] 학술국장 2차 인터뷰 (30분)` | `type:chore` `domain:LMS` `P0:must` | 개발자B |
-| `[CHORE] 기획국장 2차 인터뷰 (30분)` | `type:chore` `domain:OPS` `P0:must` | 개발자B |
-| `[CHORE] 운영진 부원 2차 인터뷰 (30분)` | `type:chore` `domain:OPS` `P0:must` | 개발자B |
-| `[CHORE] 회장 2차 인터뷰 (60분)` | `type:chore` `domain:AUTH` `P0:must` | 개발자A |
-| `[CHORE] 부회장 2차 인터뷰 (60분)` | `type:chore` `domain:MEM` `P0:must` | 개발자A |
-| `[CHORE] 홍보국장 2차 인터뷰 (60분)` | `type:chore` `domain:NOTI` `P0:must` | 개발자A |
-| `[CHORE] 행정국장 2차 인터뷰 (60분)` | `type:chore` `domain:MEM` `P0:must` | 개발자A |
-| `[CHORE] 서면 요청 자료 취합 (4개 직책 × 14~15건)` | `type:chore` `domain:DOC` `P1:must` | 개발자B |
+| `[DECISION] 회원 필수 필드 확정` | `domain:MEM` | P0 |
+| `[DECISION] 승인 규칙 확정 (승인자·자가승인 정책)` | `domain:OPS` | P0 |
+| `[DECISION] 수집 개인정보 항목 확정` | `domain:MEM` | P0 |
+| `[DECISION] 데이터 이관 대상·범위 확정` | `domain:DATA` | P1 |
+| `[DECISION] 실제 적용 일정 확정` | `domain:DOC` | P0 |
 
-> 인터뷰 8건을 묶는 Epic(`[EP-M0] 2차 인터뷰`)을 하나 만들고 Sub-issue로 연결하면
-> 보드에서 인터뷰 진행률이 한 줄로 보인다.
+(Issue Type은 다섯 개 전부 `Task`다. "결정 필요"를 나타내는 라벨은 없다 — 제목의 `[DECISION]`
+접두어가 그 역할을 한다. 3.1절/4절/5.1절 원칙③ 참조.)
 
-### M1 — 요구사항 분석 (미결정 5개 = 결정 이슈)
-
-| 제목 | 라벨 |
-|---|---|
-| `[DEC] 회원 필수 필드 확정` | `type:decision` `domain:MEM` `status:needs-decision` `P0:must` |
-| `[DEC] 승인 규칙 확정 (승인자·자가승인 정책)` | `type:decision` `domain:OPS` `status:needs-decision` `P0:must` |
-| `[DEC] 수집 개인정보 항목 확정` | `type:decision` `domain:MEM` `status:needs-decision` `P0:must` |
-| `[DEC] 데이터 이관 대상·범위 확정` | `type:decision` `domain:DATA` `status:needs-decision` `P1:must` |
-| `[DEC] 실제 적용 일정 확정` | `type:decision` `domain:DOC` `status:needs-decision` `P0:must` |
-
-> 이 5개는 **운영진 확인 대기 뷰**에 모인다. 2차 인터뷰·회의 때 그 화면만 띄우면 된다.
+> 이 5개는 **운영진 확인 대기 뷰**(제목에 `[DECISION]`이 포함된 이슈로 필터링)에 모인다.
+> 2차 인터뷰·회의 때 그 화면만 띄우면 된다.
 
 ---
 
@@ -403,14 +513,15 @@ Backlog → Todo → In Progress → In Review → Done
 - [ ] 1. ~~저장소 생성~~ — `SoongSilComputingClub/ssccops` 생성 완료
       ⚠️ **현재 Public 상태. 문서 업로드 전 Private으로 변경 필요** (개인정보 포함)
 - [ ] 2. 로컬 `git init` → `.gitignore` 먼저 커밋
-- [ ] 3. `.github/` 템플릿·라벨 파일 커밋
+- [ ] 3. `.github/` 템플릿(5종)·라벨 파일 커밋
 - [ ] 4. 라벨 일괄 생성 (`scripts/setup-github.sh`)
 - [ ] 5. 마일스톤 M0~M6 생성 (기한 반드시 입력)
 - [ ] 6. Teams 문서를 `docs/` 로 이동 후 커밋
       - PDF는 그대로, .md는 원본으로 관리
       - **개인정보 포함 파일 확인 후 이동**
 - [ ] 7. M0·M1 이슈 등록 (9절 목록)
-- [ ] 8. Projects 보드 생성 · 커스텀 필드 6개 · 뷰 5개 · 자동화 (가이드 4절)
+- [ ] 8. 조직 수준 Projects 보드 생성 · 커스텀 필드 6개 · 뷰 5개 · 자동화 (가이드 4절)
+      · `ssccops`와 개발 레포(`ssccops-server` 등)를 모두 Auto-add 대상으로 등록
 - [ ] 9. 운영진에게 안내: "확정 산출물은 Teams에도 계속 올립니다"
 - [ ] 10. Teams `0000.ref` 에 저장소 링크 남기기 (양방향 연결)
 
@@ -424,12 +535,14 @@ Backlog → Todo → In Progress → In Review → Done
    *(CLAUDE.md: "시스템에 없는 확정 정보는 공식 데이터로 보지 않는다")*
 2. **요구사항 변경은 PR로** — RFP·SRS 수정은 반드시 PR. 상대방 리뷰 후 머지.
    *(CLAUDE.md: "검수·승인 프로세스 부재" 해결)*
-3. **범위 밖 요청은 이슈로 받되 `wont` 또는 `P2:should`/`P3:could`로** — 즉시 거절하지 말고 기록한다.
+3. **범위 밖 요청은 이슈로 받되 Projects Priority를 `Won't` 또는 `P2`/`P3`로** — 즉시 거절하지 말고 기록한다.
    마일스톤은 비워둔다. 차기 사이클 착수 시 새 마일스톤으로 옮긴다.
    *(CLAUDE.md: "범위 통제")*
-4. **주 1회 보드 정리** — 회의 전 `status:needs-decision` 뷰를 확인한다.
+4. **주 1회 보드 정리** — 회의 전 **운영진 확인 대기** 뷰(제목 `[DECISION]` 필터)를 확인한다.
 5. **문서가 완료 조건** — 기능 이슈는 관련 문서 갱신 전까지 닫지 않는다.
    *(CLAUDE.md: "코드만 배포하는 것으로는 납품이 아니다")*
+6. **코드는 개발 레포에만** — `ssccops`에 코드·설정 파일을 직접 올리지 않는다.
+   구현이 필요하면 반드시 개발 레포에 Sub-issue를 만들고 `ssccops`의 이슈를 Parent로 지정한다.
 
 ---
 
@@ -442,3 +555,4 @@ Backlog → Todo → In Progress → In Review → Done
 | 접근 권한 | 운영진에게 읽기 권한을 줄지, 개발자 2인만 쓸지 |
 | Teams 병행 | 확정 산출물만 Teams에 올릴지, 전체를 동기화할지 |
 | M4 범위 | 8/14 시연 범위를 축소할지 (3절 리스크 평가 참조) |
+| Cross-repo Sub-issues | 조직 플랜에서 다른 레포 이슈를 Sub-issue로 연결 가능한지 사전 확인 필요 |
