@@ -1,0 +1,1708 @@
+<title>운영관리시스템 사용 설명서</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+/>
+
+<style>
+  /* ============ 토큰 ============ */
+  :root {
+    --paper: #faf9f6;
+    --paper-raised: #ffffff;
+    --ink: #2b2620;
+    --ink-soft: #5b5346;
+    --ink-faint: #8a7f6c;
+    --hair: #e6e0d4;
+    --hair-strong: #d3cabb;
+    --accent: #1b64da;
+    --accent-soft: #e8f2fe;
+    --accent-ink: #12459a;
+    --warn: #b5451e;
+    --warn-soft: #fbe9e1;
+    --ok: #0d7a4f;
+    --ok-soft: #e2f5ec;
+
+    /* 제품 자체(ssccops-web) 목업 재현용 토큰 — globals.css를 그대로 옮김 */
+    --app-bg: #f2f4f6;
+    --app-surface: #ffffff;
+    --app-ink: #191f28;
+    --app-accent: #3182f6;
+    --app-accent-strong: #1b64da;
+    --app-accent-soft: #e8f2fe;
+    --app-amber: #c2620a;
+    --app-amber-soft: #fff4e6;
+    --app-n300: #4e5968;
+    --app-n400: #6b7684;
+    --app-n500: #8b95a1;
+    --app-line: #e5e8eb;
+    --app-line-strong: #d1d6db;
+    --app-danger: #f04452;
+    --app-danger-strong: #d63a46;
+    --app-success: #00b25f;
+
+    --font-display: "Noto Serif KR", "Noto Sans KR", serif;
+    --font-body: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+    --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1c1a16;
+      --paper-raised: #262319;
+      --ink: #ede8dd;
+      --ink-soft: #c3bba8;
+      --ink-faint: #8f8571;
+      --hair: #3a3527;
+      --hair-strong: #4a4432;
+      --accent: #6fa8ff;
+      --accent-soft: #223047;
+      --accent-ink: #bcd6ff;
+      --warn: #e08662;
+      --warn-soft: #3a2620;
+      --ok: #6fcfa4;
+      --ok-soft: #1c3229;
+
+      --app-bg: #14161a;
+      --app-surface: #1d2026;
+      --app-ink: #eef1f5;
+      --app-accent: #5b9bff;
+      --app-accent-strong: #7fb0ff;
+      --app-accent-soft: #223047;
+      --app-amber: #e0a355;
+      --app-amber-soft: #3a2c14;
+      --app-n300: #c7ccd3;
+      --app-n400: #9aa3ad;
+      --app-n500: #767f89;
+      --app-line: #30343c;
+      --app-line-strong: #3d424c;
+      --app-danger: #ff6b76;
+      --app-danger-strong: #ff8890;
+      --app-success: #3ecf8e;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #1c1a16;
+    --paper-raised: #262319;
+    --ink: #ede8dd;
+    --ink-soft: #c3bba8;
+    --ink-faint: #8f8571;
+    --hair: #3a3527;
+    --hair-strong: #4a4432;
+    --accent: #6fa8ff;
+    --accent-soft: #223047;
+    --accent-ink: #bcd6ff;
+    --warn: #e08662;
+    --warn-soft: #3a2620;
+    --ok: #6fcfa4;
+    --ok-soft: #1c3229;
+
+    --app-bg: #14161a;
+    --app-surface: #1d2026;
+    --app-ink: #eef1f5;
+    --app-accent: #5b9bff;
+    --app-accent-strong: #7fb0ff;
+    --app-accent-soft: #223047;
+    --app-amber: #e0a355;
+    --app-amber-soft: #3a2c14;
+    --app-n300: #c7ccd3;
+    --app-n400: #9aa3ad;
+    --app-n500: #767f89;
+    --app-line: #30343c;
+    --app-line-strong: #3d424c;
+    --app-danger: #ff6b76;
+    --app-danger-strong: #ff8890;
+    --app-success: #3ecf8e;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15.5px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--accent-soft); color: var(--accent-ink); }
+
+  a { color: var(--accent); }
+
+  /* ============ 레이아웃 ============ */
+  .shell {
+    display: grid;
+    grid-template-columns: 272px minmax(0, 1fr);
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .toc {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 40px 22px 40px 28px;
+    border-right: 1px solid var(--hair);
+  }
+  .toc::-webkit-scrollbar { width: 8px; }
+  .toc::-webkit-scrollbar-thumb { background: var(--hair-strong); border-radius: 4px; }
+
+  .toc-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .toc-brand .mark {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 15px;
+    flex: none;
+  }
+  .toc-brand .name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15.5px;
+    letter-spacing: -0.01em;
+  }
+  .toc-sub {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin: 0 0 28px;
+    padding-left: 40px;
+  }
+
+  .toc nav { display: flex; flex-direction: column; gap: 1px; }
+  .toc-group { margin-bottom: 18px; }
+  .toc-group-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin: 0 0 6px 10px;
+    font-weight: 600;
+  }
+  .toc a.toc-link {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 7px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 13.5px;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .toc a.toc-link:hover { background: var(--paper-raised); color: var(--ink); }
+  .toc a.toc-link .num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    flex: none;
+    width: 16px;
+  }
+
+  main {
+    padding: 48px 56px 120px;
+    min-width: 0;
+  }
+
+  /* ============ 커버 ============ */
+  .cover {
+    padding-bottom: 44px;
+    margin-bottom: 44px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .cover .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--accent-ink);
+    text-transform: uppercase;
+    margin: 0 0 14px;
+  }
+  .cover h1 {
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+    font-weight: 700;
+  }
+  .cover .lede {
+    font-size: 16.5px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 24px;
+  }
+  .cover .meta-row {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+  .cover .meta-row strong { color: var(--ink-soft); font-weight: 600; }
+
+  /* ============ 섹션 공통 ============ */
+  section.doc-section {
+    margin-bottom: 64px;
+    scroll-margin-top: 24px;
+  }
+  section.doc-section > .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  section.doc-section > .section-head .idx {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--accent-ink);
+  }
+  section.doc-section > .section-head h2 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  section.doc-section > .section-kicker {
+    font-size: 13.5px;
+    color: var(--ink-faint);
+    margin: 0 0 26px;
+  }
+
+  h3.sub-head {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 34px 0 10px;
+  }
+  h3.sub-head:first-of-type { margin-top: 8px; }
+
+  p { max-width: 68ch; margin: 0 0 14px; color: var(--ink); }
+  p.note { color: var(--ink-soft); font-size: 14px; }
+
+  .route-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--paper-raised);
+    border: 1px solid var(--hair-strong);
+    color: var(--ink-soft);
+    padding: 3px 9px;
+    border-radius: 6px;
+    margin: 2px 6px 10px 0;
+  }
+
+  /* ============ 안내/경고 박스 ============ */
+  .callout {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin: 16px 0 22px;
+    max-width: 68ch;
+    font-size: 14px;
+  }
+  .callout .glyph {
+    flex: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+  .callout p { margin: 0; }
+  .callout p + p { margin-top: 6px; }
+  .callout.tip { background: var(--accent-soft); }
+  .callout.tip .glyph { background: var(--accent); color: #fff; }
+  .callout.tip p { color: var(--accent-ink); }
+  .callout.warn { background: var(--warn-soft); }
+  .callout.warn .glyph { background: var(--warn); color: #fff; }
+  .callout.warn p { color: var(--warn); }
+
+  /* ============ 순서 목록(사용 절차) ============ */
+  ol.steps {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+    max-width: 68ch;
+  }
+  ol.steps li {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 12px;
+    padding: 9px 0;
+    border-top: 1px solid var(--hair);
+    font-size: 14.5px;
+  }
+  ol.steps li:first-child { border-top: none; }
+  ol.steps li .n {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin-top: 1px;
+  }
+  ol.steps li b { font-weight: 600; }
+  ol.steps li .sub { display: block; color: var(--ink-faint); font-size: 13px; margin-top: 2px; }
+
+  /* ============ 필드/키 설명 표 ============ */
+  table.field-table {
+    width: 100%;
+    max-width: 68ch;
+    border-collapse: collapse;
+    margin: 4px 0 22px;
+    font-size: 13.8px;
+  }
+  table.field-table th, table.field-table td {
+    text-align: left;
+    padding: 8px 10px;
+    border-top: 1px solid var(--hair);
+    vertical-align: top;
+  }
+  table.field-table th {
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    border-top: none;
+  }
+  table.field-table td.k {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--accent-ink);
+    white-space: nowrap;
+  }
+  table.field-table td.d { color: var(--ink-soft); }
+
+  /* ============ 배지 범례 ============ */
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    margin: 6px 0 22px;
+  }
+  .legend-row .item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  /* ============ 목업 프레임 ============ */
+  .mock-frame {
+    background: var(--app-bg);
+    border: 1px solid var(--hair-strong);
+    border-radius: 14px;
+    padding: 18px;
+    margin: 8px 0 26px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    font-family: "Pretendard Variable", var(--font-body);
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .mock-frame .mock-caption {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin: 10px 2px 0;
+  }
+  .mock-inner { min-width: 560px; }
+
+  /* 앱 목업 부품들 */
+  .mk-card {
+    background: var(--app-surface);
+    border-radius: 16px;
+    box-shadow: 0 0 0 1px var(--app-line);
+    padding: 16px;
+  }
+  .mk-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    padding: 3px 7px;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .mk-b-blue { background: var(--app-accent-soft); color: var(--app-accent); }
+  .mk-b-grey { background: var(--app-bg); color: var(--app-n300); }
+  .mk-b-red { background: color-mix(in srgb, var(--app-danger) 12%, transparent); color: var(--app-danger); }
+  .mk-b-amber { background: var(--app-amber-soft); color: var(--app-amber); }
+  .mk-b-outline { border: 1px solid var(--app-line-strong); color: var(--app-n400); }
+  .mk-b-outline-accent { border: 1px solid var(--app-accent); color: var(--app-accent); }
+  .mk-b-outline-red { border: 1px solid color-mix(in srgb, var(--app-danger) 55%, transparent); color: var(--app-danger); }
+
+  .mk-pill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .mk-p-blue { background: var(--app-accent-soft); color: var(--app-accent); }
+  .mk-p-outline { border: 1px solid var(--app-line-strong); color: var(--app-n400); }
+
+  .mk-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 5px 13px;
+    font-size: 12.5px;
+    border: 1px solid var(--app-line);
+    color: var(--app-n400);
+  }
+  .mk-chip.active { border-color: var(--app-accent-strong); background: var(--app-accent-soft); color: var(--app-accent-strong); font-weight: 500; }
+
+  .mk-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: default;
+  }
+  .mk-btn.primary { background: var(--app-accent); color: #fff; }
+  .mk-btn.ghost { background: transparent; border: 1px solid var(--app-line-strong); color: var(--app-n300); }
+  .mk-btn.ghost-danger { background: transparent; border: 1px solid var(--app-line-strong); color: var(--app-danger); }
+
+  .mk-progress {
+    height: 5px;
+    border-radius: 999px;
+    background: var(--app-line);
+    overflow: hidden;
+    flex: 1;
+  }
+  .mk-progress > span { display: block; height: 100%; background: var(--app-accent-strong); border-radius: 999px; }
+  .mk-progress.danger > span { background: var(--app-danger-strong); }
+
+  .mk-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--app-line);
+  }
+  .mk-header .title { font-size: 18px; font-weight: 600; color: var(--app-ink); }
+  .mk-header .sub { font-size: 12px; color: var(--app-n500); margin-top: 2px; }
+
+  .mk-grid { display: grid; gap: 12px; }
+  .mk-row {
+    display: grid;
+    align-items: center;
+    padding: 9px 0;
+    border-top: 1px solid color-mix(in srgb, var(--app-ink) 5%, transparent);
+    font-size: 13px;
+    color: var(--app-n300);
+  }
+  .mk-row:first-child { border-top: none; }
+  .mk-th {
+    font-size: 11px;
+    color: var(--app-n500);
+    padding-bottom: 6px;
+    text-transform: none;
+  }
+
+  .mk-kv { display: grid; grid-template-columns: 78px 1fr; row-gap: 7px; font-size: 12.5px; }
+  .mk-kv dt { color: var(--app-n500); }
+  .mk-kv dd { margin: 0; color: var(--app-n300); }
+
+  .mk-section-label {
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--app-n500);
+    margin-bottom: 8px;
+  }
+
+  /* ============ 데이터사전 표 ============ */
+  .dict-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 6px 0 8px;
+  }
+  .dict-table th, .dict-table td {
+    padding: 7px 9px;
+    border: 1px solid var(--hair);
+    text-align: left;
+  }
+  .dict-table th { background: var(--paper-raised); font-weight: 600; font-size: 12px; }
+  .dict-table code { font-family: var(--font-mono); font-size: 12px; color: var(--accent-ink); }
+
+  /* ============ 마무리 ============ */
+  .colophon {
+    margin-top: 70px;
+    padding-top: 24px;
+    border-top: 1px solid var(--hair);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  code.inline {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    background: var(--paper-raised);
+    border: 1px solid var(--hair);
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: var(--accent-ink);
+  }
+
+  @media (max-width: 880px) {
+    .shell { grid-template-columns: 1fr; }
+    .toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--hair); }
+    main { padding: 32px 20px 100px; }
+  }
+</style>
+
+<div class="shell">
+  <aside class="toc">
+    <div class="toc-brand">
+      <div class="mark">S</div>
+      <div class="name">SSCC 운영관리</div>
+    </div>
+    <p class="toc-sub">사용 설명서 · v1.1</p>
+    <nav>
+      <div class="toc-group">
+        <a class="toc-link" href="#sec-changelog"><span class="num">·</span>개정 이력</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">시작하기</p>
+        <a class="toc-link" href="#sec-login"><span class="num">00</span>로그인</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">홈</p>
+        <a class="toc-link" href="#sec-dashboard"><span class="num">01</span>운영 대시보드</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">운영 · 업무</p>
+        <a class="toc-link" href="#sec-operations"><span class="num">02</span>운영 통합 · 등록</a>
+        <a class="toc-link" href="#sec-work"><span class="num">03</span>업무</a>
+        <a class="toc-link" href="#sec-subwork"><span class="num">04</span>하위 업무</a>
+        <a class="toc-link" href="#sec-approval"><span class="num">05</span>승인함</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">회원</p>
+        <a class="toc-link" href="#sec-member"><span class="num">06</span>회원 명부 · 상세</a>
+        <a class="toc-link" href="#sec-csv"><span class="num">07</span>CSV 회원 이관</a>
+        <a class="toc-link" href="#sec-role"><span class="num">08</span>역할 · 권한</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">폼</p>
+        <a class="toc-link" href="#sec-form"><span class="num">09</span>폼 관리 · 편집기</a>
+        <a class="toc-link" href="#sec-response"><span class="num">10</span>응답 확인</a>
+        <a class="toc-link" href="#sec-public"><span class="num">11</span>공개 폼(응답자 화면)</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">계정</p>
+        <a class="toc-link" href="#sec-my"><span class="num">12</span>내 계정</a>
+      </div>
+      <div class="toc-group">
+        <p class="toc-group-label">참고</p>
+        <a class="toc-link" href="#sec-glossary"><span class="num">·</span>배지 · 표기 범례</a>
+        <a class="toc-link" href="#sec-permission"><span class="num">·</span>권한 안내</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="cover">
+      <p class="eyebrow">SSCC · 숭실컴퓨팅클럽 운영관리시스템</p>
+      <h1>운영관리시스템<br />사용 설명서</h1>
+      <p class="lede">
+        업무·하위 업무 등록부터 승인, 회원 관리, 폼 제작까지 — 운영진이 이 어드민에서
+        하는 일을 화면 순서대로 안내합니다. 화면 이미지는 실제 배치를 그대로 옮긴
+        참고용 스케치이며, 세부 문구는 실제 화면과 다를 수 있습니다.
+      </p>
+      <div class="meta-row">
+        <span><strong>대상</strong> 운영진 · 국장 이상 권한 사용자</span>
+        <span><strong>환경</strong> 데스크톱 전용 (1024px 이상)</span>
+        <span><strong>로그인</strong> Google 계정 (Supabase Auth)</span>
+      </div>
+    </div>
+
+    <section class="doc-section" id="sec-changelog">
+      <div class="section-head"><span class="idx">·</span><h2>개정 이력</h2></div>
+      <p class="section-kicker">이 문서 자체의 변경 기록</p>
+      <table class="dict-table">
+        <tr><th style="width:90px;">일자</th><th style="width:70px;">버전</th><th>내용</th></tr>
+        <tr>
+          <td>2026-08-19</td>
+          <td>v1.1</td>
+          <td>
+            대시보드 목업의 "내 업무 목록" 예시를 서버 판정 수정 결과에 맞게 갱신
+            (마감 당일 건이 <code>지연</code> → <code>마감임박</code>). 근거:
+            <code>ssccops-server</code>
+            <a href="https://github.com/SoongSilComputingClub/ssccops-server/issues/121" target="_blank" rel="noopener">#121</a>
+            — 지연 판정 경계를 초 단위(<code>ddln_dt &lt; now</code>)에서 날짜 단위
+            (<code>ddln_dt &lt; 오늘 0시</code>)로 변경. 웹 코드는 변경되지 않았고
+            서버가 내려주는 <code>isDelayed</code> 값만 바뀌었다.
+          </td>
+        </tr>
+        <tr>
+          <td>2026-08-19</td>
+          <td>v1.0</td>
+          <td>최초 작성 — 전체 도메인(로그인 · 대시보드 · 운영 · 회원 · 역할 · 폼) 통합 가이드</td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="doc-section" id="sec-login">
+      <div class="section-head"><span class="idx">00</span><h2>로그인</h2></div>
+      <p class="section-kicker"><span class="route-chip">/login</span></p>
+
+      <p>
+        운영관리시스템은 별도의 아이디·비밀번호를 만들지 않습니다. 소속 Google 계정으로
+        로그인하면 그 계정이 그대로 회원 식별에 쓰입니다. 처음 로그인하는 사람은
+        자동으로 <b>임시회원</b> 등급으로 시작하고, 이후 운영진이 등급을 조정합니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner" style="max-width:420px; margin:0 auto;">
+          <div class="mk-card" style="text-align:left;">
+            <div style="width:34px;height:34px;border:1px solid var(--app-accent);border-radius:9px;display:grid;place-items:center;font-weight:700;color:var(--app-accent);font-size:15px;margin-bottom:18px;">S</div>
+            <div style="font-size:22px;font-weight:600;color:var(--app-ink);line-height:1.3;margin-bottom:10px;">SSCC<br />운영관리시스템</div>
+            <p style="font-size:12.5px;color:var(--app-n400);margin:0 0 18px;">
+              Google 계정으로 로그인합니다. 내부 회원 식별은 로그인 이후<br/>회원 도메인에서 처리됩니다.
+            </p>
+            <div style="height:1px;background:linear-gradient(90deg,var(--app-line),transparent);margin-bottom:18px;"></div>
+            <div class="mk-btn primary" style="width:100%;flex-direction:column;align-items:flex-start;gap:1px;padding:12px 16px;border-radius:14px;">
+              <span>Google로 계속하기</span>
+              <span style="font-size:11px;font-weight:400;opacity:.85;">Google 계정으로 로그인 또는 회원가입</span>
+            </div>
+            <p style="font-size:11.5px;color:var(--app-n500);margin:16px 0 0;">
+              처음 가입하면 임시회원 등급으로 바로 시작할 수 있습니다. 졸업생도 동일하게
+              가입할 수 있습니다.
+            </p>
+          </div>
+        </div>
+        <p class="mock-caption">로그인 화면 — /login</p>
+      </div>
+
+      <h3 class="sub-head">로그인하는 순서</h3>
+      <ol class="steps">
+        <li><span class="n">1</span><div><b>Google로 계속하기</b> 버튼을 누른다<span class="sub">Google 로그인 창으로 이동합니다.</span></div></li>
+        <li><span class="n">2</span><div><b>소속 Google 계정을 선택</b>한다<span class="sub">개인 계정이 아니라 동아리 활동에 쓰는 계정으로 로그인해야 회원 정보와 연결됩니다.</span></div></li>
+        <li><span class="n">3</span><div>권한 동의 후 자동으로 <b>운영관리시스템으로 돌아온다</b><span class="sub">처음 로그인이면 임시회원으로 등록되고, 이미 등록된 사람이면 바로 대시보드로 이동합니다.</span></div></li>
+      </ol>
+
+      <div class="callout warn">
+        <span class="glyph">!</span>
+        <p><b>같은 화면인데 로그인이 계속 풀린다면</b> 대부분 권한이 없는 메뉴에 접근했거나
+        서버 세션이 만료된 경우입니다. 다시 로그인해도 반복되면 운영진에게 등급·권한 확인을
+        요청하세요.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="sec-dashboard">
+      <div class="section-head"><span class="idx">01</span><h2>운영 대시보드</h2></div>
+      <p class="section-kicker"><span class="route-chip">/dashboard</span> 로그인 후 처음 보는 화면</p>
+
+      <p>
+        대시보드는 세 가지만 보여줍니다 — <b>내가 승인해야 할 것</b>, <b>곧 마감인 것</b>,
+        <b>내가 지금 하고 있는 것</b>. 매일 아침 이 화면 하나로 오늘 무엇을 해야 하는지
+        확인하도록 설계돼 있습니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid; grid-template-columns:1.7fr 1fr; gap:14px; margin-bottom:14px;">
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <span style="font-size:15px;font-weight:600;color:var(--app-ink);">승인 대기 목록</span>
+                <span style="font-size:12px;color:var(--app-accent);">전체보기</span>
+              </div>
+              <div class="mk-row mk-th" style="grid-template-columns:2fr .8fr .8fr .8fr;">
+                <span>하위 업무명</span><span>요청자</span><span>마감_일시</span><span>하위_업무_유형</span>
+              </div>
+              <div class="mk-row" style="grid-template-columns:2fr .8fr .8fr .8fr;">
+                <span style="color:var(--app-ink);font-weight:500;">2026 신입회원 OT 예산 집행</span>
+                <span>이민우</span><span>8월 18일</span>
+                <span><span class="mk-badge mk-b-grey">예산지출</span></span>
+              </div>
+            </div>
+            <div class="mk-card">
+              <div style="font-size:15px;font-weight:600;color:var(--app-ink);margin-bottom:12px;">다가오는 마감</div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;gap:10px;">
+                  <span style="width:52px;font-size:12px;color:var(--app-n500);padding-top:1px;">8월 18일</span>
+                  <div><span class="mk-badge mk-b-outline-red">D-DAY</span><div style="font-size:13px;margin-top:5px;color:var(--app-ink);">신입회원 OT 예산 집행</div></div>
+                </div>
+                <div style="display:flex;gap:10px;">
+                  <span style="width:52px;font-size:12px;color:var(--app-n500);padding-top:1px;">8월 19일</span>
+                  <div><span class="mk-badge mk-b-outline-accent">D-1</span><div style="font-size:13px;margin-top:5px;color:var(--app-ink);">동아리 박람회 부스 기획</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mk-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:15px;font-weight:600;color:var(--app-ink);">내 업무 목록</span>
+                <span class="mk-chip active">전체</span>
+                <span class="mk-chip">마감임박</span>
+                <span class="mk-chip">지연</span>
+              </div>
+              <span style="font-size:12px;color:var(--app-n500);">3건</span>
+            </div>
+            <div class="mk-row mk-th" style="grid-template-columns:2fr 1fr 1fr 1.2fr;">
+              <span>하위 업무명</span><span>업무_상태</span><span>마감_일시</span><span>진행률</span>
+            </div>
+            <div class="mk-row" style="grid-template-columns:2fr 1fr 1fr 1.2fr;">
+              <span style="color:var(--app-ink);">예산 집행 보고서 작성</span>
+              <span><span class="mk-badge mk-b-outline">검토</span></span>
+              <span>8월 18일 <span class="mk-badge mk-b-outline-accent" style="margin-left:4px;">마감임박</span></span>
+              <span style="display:flex;align-items:center;gap:8px;"><span class="mk-progress"><span style="width:100%;"></span></span>100%</span>
+            </div>
+            <div class="mk-row" style="grid-template-columns:2fr 1fr 1fr 1.2fr;">
+              <span style="color:var(--app-ink);">부스 배치도 기획</span>
+              <span><span class="mk-badge mk-b-outline">기획</span></span>
+              <span>8월 19일 <span class="mk-badge mk-b-outline-accent" style="margin-left:4px;">마감임박</span></span>
+              <span style="display:flex;align-items:center;gap:8px;"><span class="mk-progress"><span style="width:0%;"></span></span>0%</span>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">운영 대시보드 — /dashboard</p>
+      </div>
+
+      <table class="field-table">
+        <tr><th style="width:150px;">영역</th><th>보여주는 것</th></tr>
+        <tr><td class="k">승인 대기 목록</td><td class="d">지금 나에게 승인 요청이 와 있는 하위 업무 미리보기. 행을 누르면 승인함으로 이동합니다. 이 카드는 <code class="inline">WORK_MANAGE</code> 권한이 있어야 보입니다.</td></tr>
+        <tr><td class="k">다가오는 마감</td><td class="d">마감이 임박한 순서대로 나열됩니다. 배지는 <code class="inline">D-DAY</code>·<code class="inline">D-1</code> 식으로 남은 일수를 보여주며, 이미 지난 것은 빨간 테두리로 구분됩니다.</td></tr>
+        <tr><td class="k">내 업무 목록</td><td class="d">담당자가 나인 하위 업무 전체. 상단 칩으로 전체·마감임박·지연만 골라볼 수 있습니다.</td></tr>
+      </table>
+
+      <div class="callout tip">
+        <span class="glyph">i</span>
+        <p>업무를 새로 만들 권한이 있으면 화면 오른쪽 위 <b>+ 등록</b> 버튼이 활성 상태로
+        보입니다. 권한이 없으면 버튼은 그대로 있지만 눌러도 반응하지 않고, 위에 마우스를
+        올리면 이유가 말풍선으로 뜹니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="sec-operations">
+      <div class="section-head"><span class="idx">02</span><h2>운영 통합 · 등록</h2></div>
+      <p class="section-kicker">
+        <span class="route-chip">/operations</span>
+        <span class="route-chip">/operations/new</span>
+      </p>
+
+      <p>
+        업무(work)·하위 업무(sub_work)·회의(mtg)는 모두 하나의 <b>운영(oper)</b>이라는
+        뿌리에서 갈라져 나옵니다. 운영 통합 화면은 이 세 가지를 한 화면에서 조망하고,
+        등록 화면은 그중 무엇을 새로 만들지에 따라 입력창 구성이 달라집니다.
+      </p>
+
+      <h3 class="sub-head">운영 통합 — 전체를 한눈에</h3>
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
+            <div class="mk-card" style="padding:14px;">
+              <span class="mk-badge mk-b-blue">WORK</span>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--app-n500);margin:8px 0 4px;">work</div>
+              <div style="font-size:20px;font-weight:600;color:var(--app-accent);">12건</div>
+            </div>
+            <div class="mk-card" style="padding:14px;">
+              <span class="mk-badge mk-b-grey">SUB_WORK</span>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--app-n500);margin:8px 0 4px;">sub_work</div>
+              <div style="font-size:20px;font-weight:600;color:var(--app-accent);">37건</div>
+            </div>
+            <div class="mk-card" style="padding:14px;">
+              <span class="mk-badge mk-b-amber">MEETING</span>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--app-n500);margin:8px 0 4px;">mtg</div>
+              <div style="font-size:20px;font-weight:600;color:var(--app-accent);">4건</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:14px;">
+            <div class="mk-card">
+              <div style="display:flex;gap:8px;margin-bottom:12px;">
+                <span class="mk-chip active">전체</span><span class="mk-chip">업무</span><span class="mk-chip">하위업무</span><span class="mk-chip">회의</span>
+              </div>
+              <div class="mk-row" style="grid-template-columns:auto 1fr auto auto;gap:10px;">
+                <span class="mk-badge mk-b-blue">업무</span>
+                <span style="color:var(--app-ink);">2026 동아리 박람회</span>
+                <span style="color:var(--app-n500);">8/22 마감</span>
+                <span style="color:var(--app-n500);">이지원</span>
+              </div>
+              <div class="mk-row" style="grid-template-columns:auto 1fr auto auto;gap:10px;">
+                <span class="mk-badge mk-b-grey">하위업무</span>
+                <span style="color:var(--app-ink);">부스 배치도 기획</span>
+                <span style="color:var(--app-n500);">8/19 마감</span>
+                <span style="color:var(--app-n500);">이지원</span>
+              </div>
+            </div>
+            <div class="mk-card">
+              <div class="mk-section-label">상속 구조</div>
+              <div style="font-size:13px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span class="mk-badge mk-b-blue" style="font-size:10px;">업무</span><span style="color:var(--app-ink);">동아리 박람회</span></div>
+                <div style="padding-left:16px;margin-top:6px;color:var(--app-n400);border-left:1px solid var(--app-line);">└ 부스 배치도 기획</div>
+                <div style="padding-left:16px;color:var(--app-n400);border-left:1px solid var(--app-line);">└ 홍보물 제작</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">운영 통합 — /operations</p>
+      </div>
+
+      <h3 class="sub-head">새로 등록하기</h3>
+      <p>
+        <b>+ 등록</b> 버튼을 누르면 무엇을 만들지부터 고릅니다 — <b>업무</b>는 처음부터
+        새로 만드는 큰 단위이고, <b>회의</b>도 마찬가지입니다. <b>하위 업무</b>는 반드시
+        어떤 업무에 딸려야 하므로, 업무 상세 화면의 <b>+ 하위 업무</b> 버튼으로만
+        만들 수 있습니다 — 등록 화면에 하위 업무를 독립적으로 고르는 선택지가 없는 것은
+        의도된 제약입니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner" style="max-width:640px;">
+          <div class="mk-header"><div><div class="title">하위 업무 등록</div><div class="sub">상위 업무: 2026 동아리 박람회</div></div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <div>
+              <div class="mk-section-label">상위 속성 · oper</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div>
+                  <div style="font-size:12px;color:var(--app-n500);margin-bottom:4px;">운영 제목</div>
+                  <div style="border:1px solid var(--app-line-strong);border-radius:8px;padding:8px 10px;font-size:13px;color:var(--app-ink);">부스 배치도 기획</div>
+                </div>
+                <div>
+                  <div style="font-size:12px;color:var(--app-n500);margin-bottom:4px;">우선순위</div>
+                  <div style="display:flex;gap:6px;"><span class="mk-chip">낮음</span><span class="mk-chip active">보통</span><span class="mk-chip">높음</span></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="mk-section-label">확장 속성 · sub_work</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <div>
+                  <div style="font-size:12px;color:var(--app-n500);margin-bottom:4px;">하위_업무_유형</div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="mk-chip active">기획</span><span class="mk-chip">예산지출</span><span class="mk-chip">외부협조</span></div>
+                </div>
+                <div style="background:var(--app-bg);border-radius:8px;padding:8px 10px;font-size:11.5px;color:var(--app-n400);">
+                  승인 필요 · 최소 동의 2인 · 완료 점검 3항목
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:16px;"><span class="mk-btn primary">하위 업무 등록</span></div>
+        </div>
+        <p class="mock-caption">하위 업무 등록 — 업무 상세의 [+ 하위 업무]에서만 진입</p>
+      </div>
+
+      <div class="callout tip">
+        <span class="glyph">i</span>
+        <p><b>하위 업무 유형을 고르면 아래에 규칙 요약이 뜹니다.</b> 승인이 필요한지,
+        누가 승인하는지, 완료 전 체크해야 할 항목이 몇 개인지는 이 시점에 유형에서
+        그대로 복사됩니다 — 등록 후에는 유형을 바꿀 수 없으니 신중하게 고르세요.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="sec-work">
+      <div class="section-head"><span class="idx">03</span><h2>업무</h2></div>
+      <p class="section-kicker">
+        <span class="route-chip">/operations/works</span>
+        <span class="route-chip">/operations/works/{id}</span>
+        <span class="route-chip">/operations/works/{id}/edit</span>
+      </p>
+
+      <p>
+        업무는 하위 업무를 담는 큰 그릇입니다 — "2026 동아리 박람회" 같은 행사 하나,
+        또는 "회계 정산" 같은 상시 운영 하나가 업무 한 건입니다. 목록에서 카드 형태로
+        전체를 훑어보고, 카드를 누르면 그 업무에 속한 하위 업무들을 확인합니다.
+      </p>
+
+      <h3 class="sub-head">업무 목록</h3>
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <div style="display:flex;gap:6px;"><span class="mk-badge mk-b-blue">진행</span><span class="mk-badge mk-b-grey">행사</span></div>
+                <span style="font-size:12px;color:var(--app-n500);">하위 업무 6건</span>
+              </div>
+              <div style="font-size:17px;font-weight:600;color:var(--app-ink);margin-bottom:4px;">2026 동아리 박람회</div>
+              <div style="font-size:12.5px;color:var(--app-n500);margin-bottom:10px;">담당 이지원 · 8/10 ~ 8/22</div>
+              <div style="display:flex;align-items:center;gap:8px;"><span class="mk-progress"><span style="width:64%;"></span></span><span style="font-size:12px;color:var(--app-n500);">64%</span></div>
+            </div>
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <div style="display:flex;gap:6px;"><span class="mk-badge mk-b-amber">검토</span><span class="mk-badge mk-b-grey">상시</span></div>
+                <span style="font-size:12px;color:var(--app-n500);">하위 업무 3건</span>
+              </div>
+              <div style="font-size:17px;font-weight:600;color:var(--app-ink);margin-bottom:4px;">2026 상반기 회계 정산</div>
+              <div style="font-size:12.5px;color:var(--app-n500);margin-bottom:10px;">담당 박서준 · 7/01 ~ 8/31</div>
+              <div style="display:flex;align-items:center;gap:8px;"><span class="mk-progress"><span style="width:88%;"></span></span><span style="font-size:12px;color:var(--app-n500);">88%</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">업무 목록 — /operations/works</p>
+      </div>
+
+      <h3 class="sub-head">업무 상세 — 하위 업무 진행 현황</h3>
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:14px;">
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <div style="display:flex;gap:6px;"><span class="mk-badge mk-b-blue">진행</span><span style="font-size:12px;color:var(--app-n500);">행사</span></div>
+                <span class="mk-btn ghost" style="padding:5px 10px;font-size:12px;">수정</span>
+              </div>
+              <div style="font-size:19px;font-weight:600;color:var(--app-ink);margin-bottom:8px;">2026 동아리 박람회</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;"><span class="mk-progress"><span style="width:64%;"></span></span><span style="font-size:12px;color:var(--app-n500);">64%</span></div>
+              <div class="mk-section-label">상위 속성 · oper</div>
+              <dl class="mk-kv" style="margin-bottom:14px;">
+                <dt>유형</dt><dd>행사</dd>
+                <dt>담당자</dt><dd>이지원</dd>
+                <dt>기간</dt><dd>08.10 ~ 08.22</dd>
+              </dl>
+              <div class="mk-section-label">확장 속성 · work</div>
+              <dl class="mk-kv">
+                <dt>업무상태</dt><dd>진행</dd>
+                <dt>진행률</dt><dd>64%</dd>
+              </dl>
+            </div>
+            <div class="mk-card">
+              <div class="mk-section-label">하위 업무 6건</div>
+              <div class="mk-row" style="grid-template-columns:2fr 1fr 1fr 1fr;">
+                <span style="color:var(--app-ink);">부스 배치도 기획</span><span>이지원</span><span><span class="mk-badge mk-b-outline">기획</span></span><span>0%</span>
+              </div>
+              <div class="mk-row" style="grid-template-columns:2fr 1fr 1fr 1fr;">
+                <span style="color:var(--app-ink);">홍보물 제작</span><span>김하윤</span><span><span class="mk-badge mk-b-blue">진행</span></span><span>40%</span>
+              </div>
+              <div class="mk-row" style="grid-template-columns:2fr 1fr 1fr 1fr;">
+                <span style="color:var(--app-ink);">부스 예산 신청</span><span>박서준</span><span><span class="mk-badge mk-b-amber">승인 대기</span></span><span>100%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">업무 상세 — /operations/works/{id}</p>
+      </div>
+
+      <h3 class="sub-head">업무 수정에서 바꿀 수 있는 것</h3>
+      <table class="field-table">
+        <tr><th style="width:160px;">항목</th><th>비고</th></tr>
+        <tr><td class="k">운영 제목 · 우선순위 · 기간</td><td class="d">자유롭게 수정</td></tr>
+        <tr><td class="k">업무 유형 · 총평</td><td class="d">자유롭게 수정</td></tr>
+        <tr><td class="k">담당자</td><td class="d">읽기 전용 — 담당자를 바꾸는 기능은 아직 없습니다</td></tr>
+      </table>
+      <div class="callout warn">
+        <span class="glyph">!</span>
+        <p>수정 화면은 <b>선택 입력란도 비워 두면 지워진 것으로 저장</b>됩니다. 부분
+        수정이 아니라 전체 교체이므로, 저장 전 화면에 채워진 값이 맞는지 한 번 더
+        확인하세요.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="sec-subwork">
+      <div class="section-head"><span class="idx">04</span><h2>하위 업무</h2></div>
+      <p class="section-kicker">
+        <span class="route-chip">/operations/sub-works</span>
+        <span class="route-chip">/operations/sub-works/{id}</span>
+        <span class="route-chip">/operations/sub-works/{id}/edit</span>
+      </p>
+
+      <p>
+        실제로 손을 움직여 처리하는 최소 단위입니다. <b>기획 → 진행 → 검토 → 완료</b>
+        네 단계를 순서대로 밟으며, 유형에 따라 완료 전에 승인이 필요할 수 있습니다.
+      </p>
+
+      <h3 class="sub-head">목록에서 상태 훑어보기</h3>
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div class="mk-card">
+            <div style="display:flex;gap:8px;margin-bottom:12px;">
+              <span class="mk-chip active">전체</span><span class="mk-chip">진행</span><span class="mk-chip">승인대기</span><span class="mk-chip">마감임박</span><span class="mk-chip">지연</span><span class="mk-chip">완료</span>
+            </div>
+            <div class="mk-row mk-th" style="grid-template-columns:1.4fr .9fr .8fr .9fr .8fr .8fr 1fr;">
+              <span>하위 업무</span><span>상위 업무</span><span>유형</span><span>담당자</span><span>마감</span><span>상태</span><span>진행률</span>
+            </div>
+            <div class="mk-row" style="grid-template-columns:1.4fr .9fr .8fr .9fr .8fr .8fr 1fr;">
+              <span style="color:var(--app-ink);">부스 예산 신청</span><span><span class="mk-badge mk-b-grey">박람회</span></span><span><span class="mk-badge mk-b-blue">예산지출</span></span><span>박서준</span><span>8/18</span><span><span class="mk-badge mk-b-amber">승인대기</span></span><span style="display:flex;gap:6px;align-items:center;"><span class="mk-progress"><span style="width:100%;"></span></span>100%</span>
+            </div>
+            <div class="mk-row" style="grid-template-columns:1.4fr .9fr .8fr .9fr .8fr .8fr 1fr;">
+              <span style="color:var(--app-ink);">홍보물 제작</span><span><span class="mk-badge mk-b-grey">박람회</span></span><span><span class="mk-badge mk-b-blue">제작</span></span><span>김하윤</span><span>8/20</span><span><span class="mk-badge mk-b-blue">진행</span></span><span style="display:flex;gap:6px;align-items:center;"><span class="mk-progress"><span style="width:40%;"></span></span>40%</span>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">하위 업무 목록 — /operations/sub-works</p>
+      </div>
+
+      <h3 class="sub-head">상세 — 지금 할 수 있는 전이 하나만 보인다</h3>
+      <p>
+        하위 업무 상세 화면의 버튼은 언제나 <b>지금 단계에서 다음으로 넘어가는 동작
+        하나</b>만 보여줍니다. 두 단계를 한 번에 건너뛰는 버튼은 없습니다 — 중간에
+        요청이 끊기면 누른 적 없는 상태로 남는 것을 막기 위한 설계입니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner" style="max-width:720px;">
+          <div class="mk-card" style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+                  <span style="font-size:20px;font-weight:600;color:var(--app-ink);">부스 예산 신청</span>
+                  <span class="mk-badge mk-b-outline">예산지출</span>
+                  <span class="mk-badge mk-b-amber">승인 대기</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <span class="mk-btn ghost" style="padding:5px 10px;font-size:12px;">수정</span>
+                <span class="mk-btn ghost-danger" style="padding:5px 10px;font-size:12px;">반려</span>
+                <span class="mk-btn primary" style="padding:5px 10px;font-size:12px;">완료 승인</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;margin:14px 0;">
+              <span style="width:26px;height:26px;border-radius:50%;background:var(--app-accent-strong);color:#fff;display:grid;place-items:center;font-size:11px;">✓</span>
+              <span style="height:1px;flex:1;background:var(--app-accent-strong);"></span>
+              <span style="width:26px;height:26px;border-radius:50%;background:var(--app-accent-strong);color:#fff;display:grid;place-items:center;font-size:11px;">✓</span>
+              <span style="height:1px;flex:1;background:var(--app-accent-strong);"></span>
+              <span style="width:26px;height:26px;border-radius:50%;background:var(--app-accent);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:600;">3</span>
+              <span style="height:1px;flex:1;background:var(--app-line);"></span>
+              <span style="width:26px;height:26px;border-radius:50%;border:1px solid var(--app-line-strong);color:var(--app-n500);display:grid;place-items:center;font-size:11px;">4</span>
+            </div>
+            <div style="font-size:12.5px;color:var(--app-n500);">기획 → 진행 → <b style="color:var(--app-ink);">검토</b> → 완료</div>
+            <div style="margin-top:10px;padding:9px 12px;background:var(--app-amber-soft);border-radius:8px;font-size:12.5px;color:var(--app-amber);">정족수 2/3 동의 — 완료 승인은 정족수를 채운 뒤에 가능합니다</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="mk-card">
+              <div class="mk-section-label">확장 속성 · sub_work</div>
+              <dl class="mk-kv">
+                <dt>유형</dt><dd>예산지출</dd>
+                <dt>마감_일시</dt><dd>08.18 <span class="mk-badge mk-b-outline-red" style="margin-left:4px;">D-DAY</span></dd>
+                <dt>업무_상태</dt><dd>검토</dd>
+                <dt>승인_상태</dt><dd>대기</dd>
+              </dl>
+            </div>
+            <div class="mk-card">
+              <div class="mk-section-label">완료 점검 목록 · 2/3 완료</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+                <div style="display:flex;gap:8px;align-items:center;"><span style="width:16px;height:16px;border-radius:4px;background:var(--app-accent-strong);color:#fff;display:grid;place-items:center;font-size:10px;">✓</span>견적서 첨부</div>
+                <div style="display:flex;gap:8px;align-items:center;"><span style="width:16px;height:16px;border-radius:4px;background:var(--app-accent-strong);color:#fff;display:grid;place-items:center;font-size:10px;">✓</span>승인권자 서명</div>
+                <div style="display:flex;gap:8px;align-items:center;"><span style="width:16px;height:16px;border-radius:4px;border:1px solid var(--app-line-strong);"></span>정산 영수증 제출</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">하위 업무 상세 — /operations/sub-works/{id} (검토 단계 · 정족수 대기 예시)</p>
+      </div>
+
+      <h3 class="sub-head">단계별 버튼</h3>
+      <table class="field-table">
+        <tr><th style="width:110px;">현재 단계</th><th>보이는 버튼</th><th>다음 단계</th></tr>
+        <tr><td class="k">기획</td><td class="d">착수</td><td class="d">진행</td></tr>
+        <tr><td class="k">진행</td><td class="d">완료 승인 요청</td><td class="d">검토</td></tr>
+        <tr><td class="k">검토</td><td class="d">완료 승인 / 반려</td><td class="d">완료 / 진행(반려 시)</td></tr>
+      </table>
+
+      <div class="callout tip">
+        <span class="glyph">i</span>
+        <p><b>승인 버튼과 완료 점검은 서로 다른 조건입니다.</b> 승인 버튼이 보이는 것은
+        "권한이 있다"는 뜻일 뿐이고, 실제로 눌러 완료 처리하려면 오른쪽 완료 점검
+        목록이 전부 체크돼 있어야 합니다(정족수가 있는 유형은 정족수도 함께 채워야
+        합니다). 체크가 덜 됐는데 버튼이 잠겨 있다면 권한 문제가 아니라 점검 미완료입니다.</p>
+      </div>
+
+      <h3 class="sub-head">하위 업무 수정에서 바꿀 수 없는 것</h3>
+      <p class="note">
+        담당자·하위 업무 유형·상위 업무는 등록 시점에 고정됩니다. 유형이 바뀌면 승인
+        필요 여부·승인자·정족수·완료 점검 항목이 통째로 달라지는데, 이미 등록 시점에
+        복사된 값이라 되돌릴 방법이 없기 때문입니다. 유형을 잘못 골랐다면 해당 하위
+        업무를 마감하고 새로 등록해야 합니다.
+      </p>
+    </section>
+
+    <section class="doc-section" id="sec-approval">
+      <div class="section-head"><span class="idx">05</span><h2>승인함</h2></div>
+      <p class="section-kicker"><span class="route-chip">/approvals</span></p>
+
+      <p>
+        승인이 필요한 하위 업무를 <b>대기 · 승인 · 반려</b> 탭으로 나눠 모아 봅니다.
+        정족수가 필요한 유형은 카드 안에서 바로 찬반 투표를 던질 수 있습니다 — 투표와
+        최종 완료 승인은 별개입니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+            <span class="mk-chip active">대기</span><span class="mk-chip">승인</span><span class="mk-chip">반려</span>
+            <span style="font-size:12px;color:var(--app-n500);margin-left:auto;">4건</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <div style="display:flex;gap:6px;"><span class="mk-badge mk-b-amber">대기</span><span class="mk-badge mk-b-grey">예산지출</span></div>
+                <span style="font-size:11.5px;color:var(--app-n500);">08.16 요청</span>
+              </div>
+              <div style="font-size:15px;font-weight:600;color:var(--app-ink);margin-bottom:4px;">부스 예산 신청</div>
+              <div style="font-size:12px;color:var(--app-n500);margin-bottom:10px;">등록자 박서준 · 승인자 국장 · 마감 08.18(D-DAY)</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="mk-progress"><span style="width:66%;"></span></span><span style="font-size:11.5px;color:var(--app-n500);">정족수 2/3 동의</span></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;">
+                <span class="mk-btn ghost" style="font-size:11.5px;padding:6px;">동의</span>
+                <span class="mk-btn ghost-danger" style="font-size:11.5px;padding:6px;">부동의</span>
+                <span class="mk-btn ghost-danger" style="font-size:11.5px;padding:6px;">반려</span>
+                <span class="mk-btn primary" style="font-size:11.5px;padding:6px;">승인</span>
+              </div>
+            </div>
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <div style="display:flex;gap:6px;"><span class="mk-badge mk-b-amber">대기</span><span class="mk-badge mk-b-grey">외부협조</span></div>
+                <span style="font-size:11.5px;color:var(--app-n500);">08.15 요청</span>
+              </div>
+              <div style="font-size:15px;font-weight:600;color:var(--app-ink);margin-bottom:4px;">학교 시설팀 부스 설치 협조</div>
+              <div style="font-size:12px;color:var(--app-n500);margin-bottom:10px;">등록자 이지원 · 승인자 부회장 · 마감 08.20(D-2)</div>
+              <div style="font-size:12px;color:var(--app-danger);margin-bottom:10px;">직전 반려 사유: 설치 일정 재확인 필요</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                <span class="mk-btn ghost-danger" style="font-size:11.5px;padding:6px;">반려</span>
+                <span class="mk-btn primary" style="font-size:11.5px;padding:6px;">승인</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">승인함 — /approvals (대기 탭)</p>
+      </div>
+
+      <div class="callout tip">
+        <span class="glyph">i</span>
+        <p>대시보드의 <b>승인 대기 목록</b>에서 행을 누르면 이 화면으로 넘어오면서 해당
+        카드가 파란 테두리로 강조되고 자동으로 스크롤됩니다. 카드를 못 찾겠으면 대시보드를
+        거쳐 들어오는 것이 가장 빠릅니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="sec-member">
+      <div class="section-head"><span class="idx">06</span><h2>회원 명부 · 상세</h2></div>
+      <p class="section-kicker">
+        <span class="route-chip">/members</span>
+        <span class="route-chip">/members/{id}</span>
+        <span class="route-chip">/members/{id}/edit</span>
+      </p>
+
+      <p>
+        전체 회원을 이름·학번으로 검색하고, 등급·상태로 걸러 봅니다. 새 회원을
+        운영진이 직접 만드는 기능은 없습니다 — 신규 회원은 본인이 Google 계정으로
+        로그인해 가입하거나, 과거 명단을 <a href="#sec-csv">CSV로 이관</a>해 들어옵니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div class="mk-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="font-size:13px;color:var(--app-n500);">회원 128명</div>
+              <div style="display:flex;gap:8px;">
+                <span class="mk-chip active">전체</span><span class="mk-chip">정회원</span><span class="mk-chip">준회원</span><span class="mk-chip">임시회원</span>
+              </div>
+            </div>
+            <div class="mk-row mk-th" style="grid-template-columns:1.2fr .8fr .6fr 1fr .8fr .8fr 1.2fr;">
+              <span>이름</span><span>학번</span><span>기수</span><span>학과·학년</span><span>등급</span><span>상태</span><span>현재 역할</span>
+            </div>
+            <div class="mk-row" style="grid-template-columns:1.2fr .8fr .6fr 1fr .8fr .8fr 1.2fr;">
+              <span style="color:var(--app-ink);">이지원</span><span>20231234</span><span>15기</span><span>컴퓨터학부 · 3학년</span><span><span class="mk-badge mk-b-blue">정회원</span></span><span><span class="mk-badge mk-b-grey">활동</span></span><span>회장, 박람회 총괄</span>
+            </div>
+            <div class="mk-row" style="grid-template-columns:1.2fr .8fr .6fr 1fr .8fr .8fr 1.2fr;">
+              <span style="color:var(--app-ink);">김하윤 <span class="mk-pill mk-p-outline" style="margin-left:4px;">이관</span></span><span>20241056</span><span>16기</span><span>소프트웨어학부 · 2학년</span><span><span class="mk-badge mk-b-blue">준회원</span></span><span><span class="mk-badge mk-b-grey">활동</span></span><span>—</span>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">회원 명부 — /members</p>
+      </div>
+
+      <h3 class="sub-head">회원 상세</h3>
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:14px;">
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="mk-card">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                  <span style="font-size:21px;font-weight:600;color:var(--app-ink);">이지원</span>
+                  <span class="mk-badge mk-b-blue">정회원</span><span class="mk-badge mk-b-grey">활동</span>
+                </div>
+                <div style="font-size:12px;color:var(--app-n500);margin-bottom:12px;">회원 #14 · 가입 2023.03.02</div>
+                <dl class="mk-kv" style="grid-template-columns:70px 1fr 70px 1fr;column-gap:16px;">
+                  <dt>학번</dt><dd>20231234</dd><dt>기수</dt><dd>15기</dd>
+                  <dt>학과</dt><dd>컴퓨터학부</dd><dt>학년</dt><dd>3학년</dd>
+                </dl>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div class="mk-card">
+                  <div style="font-size:14px;font-weight:600;color:var(--app-ink);margin-bottom:8px;">회원등급</div>
+                  <span class="mk-badge mk-b-blue">정회원</span>
+                  <div style="margin-top:10px;"><span class="mk-btn ghost" style="font-size:12px;padding:5px 10px;">등급 변경</span></div>
+                </div>
+                <div class="mk-card">
+                  <div style="font-size:14px;font-weight:600;color:var(--app-ink);margin-bottom:8px;">회원상태</div>
+                  <span class="mk-badge mk-b-grey">활동</span>
+                  <div style="margin-top:10px;"><span class="mk-btn ghost" style="font-size:12px;padding:5px 10px;">상태 변경</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="mk-card">
+                <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                  <span style="font-size:14px;font-weight:600;color:var(--app-ink);">역할</span>
+                  <span class="mk-btn ghost" style="font-size:11.5px;padding:4px 9px;">역할 부여</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border:1px solid var(--app-line);border-radius:8px;">
+                    <span style="color:var(--app-ink);">회장 <span class="mk-pill mk-p-blue" style="margin-left:4px;">대표</span></span>
+                    <span style="color:var(--app-n500);font-size:11.5px;">종료</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mk-card">
+                <div style="font-size:14px;font-weight:600;color:var(--app-ink);margin-bottom:10px;">최근 변경이력</div>
+                <div style="font-size:12.5px;color:var(--app-n400);">등급 · 준회원 → 정회원 · 2026.03.02</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">회원 상세 — /members/{id}</p>
+      </div>
+
+      <table class="field-table">
+        <tr><th style="width:170px;">화면</th><th>바꿀 수 있는 것</th></tr>
+        <tr><td class="k">정보 수정</td><td class="d">회원명 · 기수 · 학과 · 학년 · 전화번호 · 이메일. 학번 · 가입일은 이 화면에서 바꿀 수 없습니다.</td></tr>
+        <tr><td class="k">등급 · 상태 변경</td><td class="d">상세 화면의 별도 버튼으로만 — 정보 수정 화면에 섞여 있지 않습니다.</td></tr>
+        <tr><td class="k">역할 부여 · 종료</td><td class="d"><a href="#sec-role">역할</a> 권한이 있어야 보입니다.</td></tr>
+      </table>
+    </section>
+
+    <section class="doc-section" id="sec-csv">
+      <div class="section-head"><span class="idx">07</span><h2>CSV 회원 이관</h2></div>
+      <p class="section-kicker"><span class="route-chip">/members/csv-import</span></p>
+
+      <p>
+        과거 명단(엑셀·구글 시트를 CSV로 내보낸 파일)을 한 번에 등록하는 4단계
+        마법사입니다. <b>중복으로 보이는 행은 자동으로 병합하지 않고 건너뜁니다</b> —
+        실행 결과는 되돌릴 수 없으므로 3단계 검증에서 반드시 내용을 확인하세요.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:flex;align-items:center;gap:0;margin-bottom:18px;">
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--app-accent-strong);font-weight:600;"><span style="width:20px;height:20px;border-radius:50%;background:var(--app-accent-strong);color:#fff;display:grid;place-items:center;font-size:10px;">1</span>파일 선택</span>
+            <span style="flex:1;height:1px;background:var(--app-line-strong);margin:0 8px;"></span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--app-n500);"><span style="width:20px;height:20px;border-radius:50%;border:1px solid var(--app-line-strong);display:grid;place-items:center;font-size:10px;">2</span>컬럼 매핑</span>
+            <span style="flex:1;height:1px;background:var(--app-line);margin:0 8px;"></span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--app-n500);"><span style="width:20px;height:20px;border-radius:50%;border:1px solid var(--app-line-strong);display:grid;place-items:center;font-size:10px;">3</span>사전 검증</span>
+            <span style="flex:1;height:1px;background:var(--app-line);margin:0 8px;"></span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--app-n500);"><span style="width:20px;height:20px;border-radius:50%;border:1px solid var(--app-line-strong);display:grid;place-items:center;font-size:10px;">4</span>결과</span>
+          </div>
+          <div class="mk-card" style="text-align:center;padding:34px 20px;border:1.5px dashed var(--app-line-strong);box-shadow:none;">
+            <div style="font-size:13.5px;color:var(--app-n400);margin-bottom:10px;">CSV 파일을 여기로 끌어오거나</div>
+            <span class="mk-btn primary" style="font-size:13px;">CSV 파일 선택</span>
+          </div>
+        </div>
+        <p class="mock-caption">CSV 회원 이관 — 1단계 파일 선택</p>
+      </div>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+            <div class="mk-card" style="padding:12px;">
+              <div style="font-size:11.5px;color:var(--app-n500);">전체 행</div>
+              <div style="font-size:22px;font-weight:600;color:var(--app-ink);">86</div>
+            </div>
+            <div class="mk-card" style="padding:12px;">
+              <div style="font-size:11.5px;color:var(--app-n500);">정상 후보</div>
+              <div style="font-size:22px;font-weight:600;color:var(--app-accent);">79</div>
+            </div>
+            <div class="mk-card" style="padding:12px;">
+              <div style="font-size:11.5px;color:var(--app-n500);">오류</div>
+              <div style="font-size:22px;font-weight:600;color:var(--app-danger);">3</div>
+            </div>
+            <div class="mk-card" style="padding:12px;">
+              <div style="font-size:11.5px;color:var(--app-n500);">중복 후보</div>
+              <div style="font-size:22px;font-weight:600;color:var(--app-danger);">4</div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">3단계 사전 검증 — 이 숫자를 반드시 확인하고 다음으로</p>
+      </div>
+
+      <ol class="steps">
+        <li><span class="n">1</span><div><b>양식 CSV를 먼저 내려받아</b> 형식을 맞춘다<span class="sub">필수·조건부·선택 컬럼이 표로 안내됩니다.</span></div></li>
+        <li><span class="n">2</span><div>내 파일의 <b>헤더를 시스템 필드에 연결</b>한다<span class="sub">헤더명이 정확히 일치하지 않아도 직접 매핑할 수 있습니다.</span></div></li>
+        <li><span class="n">3</span><div><b>오류·중복 행을 확인</b>한다<span class="sub">이 행들은 이관되지 않고 건너뜁니다 — 실행 전 사유를 꼭 읽어보세요.</span></div></li>
+        <li><span class="n">4</span><div>"되돌릴 수 없다는 것을 확인했습니다"에 <b>체크 후 실행</b>한다<span class="sub">실행하면 정상 후보만 새 회원으로 등록됩니다.</span></div></li>
+      </ol>
+
+      <div class="callout warn">
+        <span class="glyph">!</span>
+        <p>이관된 회원은 아직 <b>로그인 계정과 연결되지 않은 상태</b>입니다(이름 옆에
+        "이관" 표시). 본인이 Google로 가입하면 그때 실제 계정과 연결됩니다 — 이관만으로
+        로그인이 가능해지는 것은 아닙니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="sec-role">
+      <div class="section-head"><span class="idx">08</span><h2>역할 · 권한</h2></div>
+      <p class="section-kicker">
+        <span class="route-chip">/members/roles</span>
+        <span class="route-chip">/members/roles/{id}/authorities</span>
+        <span class="route-chip">/members/authorities</span>
+      </p>
+
+      <p>
+        "회장", "국장", "박람회 총괄" 같은 <b>역할</b>을 만들고, 역할마다 어떤
+        <b>권한</b>을 줄지 정하는 화면입니다. 화면에 뜨는 모든 버튼·메뉴는 결국
+        이 권한 배열로 결정됩니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:14px;">
+            <div class="mk-card">
+              <div class="mk-section-label">역할별 권한 부여 — 회장</div>
+              <div style="display:flex;flex-direction:column;gap:2px;font-size:13px;">
+                <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--app-line);">
+                  <span style="width:14px;height:14px;border-radius:4px;background:var(--app-accent-strong);"></span>
+                  <span style="color:var(--app-ink);">업무 관리</span>
+                  <code style="font-size:11px;color:var(--app-n500);font-family:'JetBrains Mono',monospace;">WORK_MANAGE</code>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--app-line);">
+                  <span style="width:14px;height:14px;border-radius:4px;background:var(--app-accent-strong);"></span>
+                  <span style="color:var(--app-ink);">회원 관리</span>
+                  <code style="font-size:11px;color:var(--app-n500);font-family:'JetBrains Mono',monospace;">MEMBER_MANAGE</code>
+                  <span class="mk-badge mk-b-outline-accent" style="margin-left:auto;">상위에서 부여</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--app-line);">
+                  <span style="width:14px;height:14px;border-radius:4px;border:1px solid var(--app-line-strong);"></span>
+                  <span style="color:var(--app-n400);">폼 라벨 관리</span>
+                  <code style="font-size:11px;color:var(--app-n500);font-family:'JetBrains Mono',monospace;">FORM_LABEL_MANAGE</code>
+                </div>
+              </div>
+            </div>
+            <div class="mk-card">
+              <div class="mk-section-label">변경분 요약</div>
+              <div style="font-size:13px;color:var(--app-ink);margin-bottom:10px;">실제 부여 권한 5개 → 6개</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;">
+                <div><span class="mk-badge mk-b-blue">부여</span> <span style="color:var(--app-n400);margin-left:6px;">SUB_WORK_TYPE_MANAGE</span></div>
+              </div>
+              <div style="margin-top:14px;display:flex;gap:8px;">
+                <span class="mk-btn ghost" style="font-size:12px;padding:6px 12px;">되돌리기</span>
+                <span class="mk-btn primary" style="font-size:12px;padding:6px 12px;">저장</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">역할별 권한 부여 — 체크는 직접 부여, 파란 배지는 상위 권한에서 상속됨</p>
+      </div>
+
+      <table class="field-table">
+        <tr><th style="width:150px;">개념</th><th>의미</th></tr>
+        <tr><td class="k">역할</td><td class="d">회원에게 붙는 이름표. 한 회원이 역할을 여러 개 가질 수 있고, 그중 하나를 "대표" 역할로 지정할 수 있습니다.</td></tr>
+        <tr><td class="k">권한</td><td class="d">화면 기능 하나하나에 매달린 코드(예: <code class="inline">WORK_MANAGE</code>). 역할에 권한을 체크해야 그 역할을 가진 회원이 해당 기능을 씁니다.</td></tr>
+        <tr><td class="k">상속</td><td class="d">권한 트리에서 상위 권한을 가지면 하위 권한도 자동으로 포함됩니다. "상위에서 부여" 배지가 붙은 항목은 체크를 해제할 수 없습니다.</td></tr>
+      </table>
+
+      <div class="callout warn">
+        <span class="glyph">!</span>
+        <p><b>묶음 권한만으로는 세부 권한이 열리지 않습니다.</b> 예를 들어 어떤 역할에
+        "업무 쓰기" 권한만 주면 "업무 관리" 묶음 권한은 자동으로 따라오지 않습니다 —
+        화면은 정확히 그 회원이 가진 권한 코드만 보고 버튼을 그립니다.</p>
+      </div>
+    </section>
+
+    <section class="doc-section" id="sec-form">
+      <div class="section-head"><span class="idx">09</span><h2>폼 관리 · 편집기</h2></div>
+      <p class="section-kicker">
+        <span class="route-chip">/forms</span>
+        <span class="route-chip">/forms/{id}</span>
+        <span class="route-chip">/forms/{id}/edit</span>
+      </p>
+
+      <p>
+        신입회원 모집, 행사 참가 신청 같은 <b>외부 공개 설문</b>을 만듭니다. 여러
+        페이지로 나눌 수 있고, 선택지에 따라 다음 페이지를 다르게 보여주는 분기도
+        지원합니다. 작성 중인 내용은 자동으로 저장됩니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span class="mk-badge mk-b-blue">접수중</span>
+                <span style="font-size:12px;color:var(--app-n500);">응답 42</span>
+              </div>
+              <div style="font-size:16px;font-weight:600;color:var(--app-ink);margin-bottom:6px;">2026 신입회원 모집</div>
+              <div style="font-size:12px;color:var(--app-n500);margin-bottom:10px;">08.01 09:00 ~ 08.25 23:59</div>
+              <div style="display:flex;gap:6px;"><span class="mk-pill mk-p-blue">모집</span></div>
+            </div>
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span class="mk-badge mk-b-outline">작성중</span>
+                <span style="font-size:12px;color:var(--app-n500);">응답 0</span>
+              </div>
+              <div style="font-size:16px;font-weight:600;color:var(--app-ink);margin-bottom:6px;">여름 MT 참가 신청</div>
+              <div style="font-size:12px;color:var(--app-n500);margin-bottom:10px;">접수 기간 미정</div>
+              <div style="display:flex;gap:6px;"><span class="mk-pill mk-p-blue">행사</span></div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">폼 목록 — /forms</p>
+      </div>
+
+      <h3 class="sub-head">편집기 — 페이지와 문항 구성</h3>
+      <div class="mock-frame">
+        <div class="mock-inner" style="max-width:760px;">
+          <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:14px;">
+            <div class="mk-card">
+              <div class="mk-section-label">기본정보</div>
+              <div style="font-size:12px;color:var(--app-n500);margin-bottom:4px;">폼 제목</div>
+              <div style="border:1px solid var(--app-line-strong);border-radius:8px;padding:7px 9px;font-size:13px;color:var(--app-ink);margin-bottom:10px;">2026 신입회원 모집</div>
+              <div class="mk-section-label" style="margin-top:12px;">폼 라벨</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;"><span class="mk-chip active">모집</span><span class="mk-chip">행사</span><span class="mk-chip">내부</span></div>
+              <div style="margin-top:16px;display:flex;gap:8px;">
+                <span class="mk-btn ghost" style="font-size:12px;padding:6px 10px;">지금 저장</span>
+                <span class="mk-btn primary" style="font-size:12px;padding:6px 10px;">저장하고 상세로</span>
+              </div>
+            </div>
+            <div class="mk-card">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <span class="mk-section-label" style="margin:0;">페이지</span>
+                <span style="font-size:12px;color:var(--app-accent);">+ 페이지 추가</span>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:10px;"><span class="mk-chip active">1. 기본 정보</span><span class="mk-chip">2. 지원 동기</span></div>
+              <div style="border:1px solid var(--app-line);border-radius:10px;padding:10px;margin-bottom:8px;">
+                <div style="font-size:13px;color:var(--app-ink);font-weight:500;">Q1. 이름을 입력해 주세요 <span style="color:var(--app-danger);">*</span></div>
+                <div style="font-size:11px;color:var(--app-n500);margin-top:4px;">단답형 · 필수</div>
+              </div>
+              <div style="border:1px solid var(--app-line);border-radius:10px;padding:10px;">
+                <div style="font-size:13px;color:var(--app-ink);font-weight:500;">Q2. 지원 분야를 선택해 주세요 <span style="color:var(--app-danger);">*</span></div>
+                <div style="font-size:11px;color:var(--app-n500);margin-top:4px;">단일 선택 · 필수 · 선택지별 페이지 분기 있음</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">폼 편집기 — /forms/{id}/edit</p>
+      </div>
+
+      <table class="field-table">
+        <tr><th style="width:140px;">문항 유형</th><th>비고</th></tr>
+        <tr><td class="k">단답형 · 장문형</td><td class="d">텍스트 입력. 정규식으로 입력 형식을 검증할 수 있습니다(고급 설정).</td></tr>
+        <tr><td class="k">단일 선택 · 다중 선택</td><td class="d">선택지별로 다음에 어느 페이지로 보낼지 분기를 지정할 수 있습니다.</td></tr>
+        <tr><td class="k">날짜</td><td class="d">날짜 선택 입력.</td></tr>
+      </table>
+
+      <div class="callout tip">
+        <span class="glyph">i</span>
+        <p>화면 상단에는 항상 <b>저장 상태 표시줄</b>이 떠 있습니다. 입력을 멈추면
+        자동으로 저장되므로 별도로 저장 버튼을 계속 누르지 않아도 되지만, 다른 화면으로
+        옮기기 전에는 표시줄이 "저장됨"으로 바뀌었는지 한 번 확인하는 습관을 들이세요.</p>
+      </div>
+
+      <h3 class="sub-head">접수 상태 바꾸기</h3>
+      <p class="note">
+        폼 상세 화면 하단에서 접수를 시작하거나 마감할 수 있습니다. 접수를 마감하면
+        공개 링크에 들어온 응답자는 더 이상 새 응답을 제출할 수 없고, 이미 제출된
+        응답은 그대로 남습니다.
+      </p>
+    </section>
+
+    <section class="doc-section" id="sec-response">
+      <div class="section-head"><span class="idx">10</span><h2>응답 확인</h2></div>
+      <p class="section-kicker">
+        <span class="route-chip">/forms/{id}/responses</span>
+        <span class="route-chip">/forms/{id}/responses/{rid}</span>
+      </p>
+
+      <p>제출된 응답을 훑어보고, 필요하면 승인·반려로 상태를 매깁니다.</p>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <span class="mk-chip active">전체</span><span class="mk-chip">제출</span><span class="mk-chip">승인</span><span class="mk-chip">반려</span>
+            <span class="mk-chip" style="border-style:dashed;">작성중</span>
+          </div>
+          <div class="mk-card">
+            <div class="mk-row mk-th" style="grid-template-columns:1fr .8fr 1.4fr 1fr .8fr;">
+              <span>이름</span><span>학번</span><span>학과·등급·상태</span><span>제출일시</span><span>상태</span>
+            </div>
+            <div class="mk-row" style="grid-template-columns:1fr .8fr 1.4fr 1fr .8fr;">
+              <span style="color:var(--app-ink);">최도윤</span><span>20261123</span><span>전기공학부 · 신입 · 활동</span><span>08.14 21:03</span><span><span class="mk-badge mk-b-blue">승인</span></span>
+            </div>
+            <div class="mk-row" style="grid-template-columns:1fr .8fr 1.4fr 1fr .8fr;">
+              <span style="color:var(--app-ink);">한서아</span><span>20261124</span><span>산업정보시스템 · 신입 · 활동</span><span>08.15 10:41</span><span><span class="mk-badge mk-b-red">반려</span></span>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">응답 목록 — /forms/{id}/responses (상태 클릭 시 변경 창)</p>
+      </div>
+
+      <p class="note">
+        응답 상세 화면 하단의 <b>이전 · 다음</b> 버튼으로 목록을 다시 열지 않고도
+        연속으로 검토할 수 있습니다.
+      </p>
+    </section>
+
+    <section class="doc-section" id="sec-public">
+      <div class="section-head"><span class="idx">11</span><h2>공개 폼 — 응답자가 보는 화면</h2></div>
+      <p class="section-kicker"><span class="route-chip">/f/{formId}</span> 로그인 없이 접근 가능</p>
+
+      <p>
+        운영진이 만든 폼의 <b>공개 링크</b>를 응답자에게 공유하면, 응답자는 이 화면에서
+        어드민 로그인 없이 작성합니다. 다만 회원 식별이 필요한 폼은 응답자에게도 Google
+        로그인을 요구할 수 있습니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner" style="max-width:420px;margin:0 auto;">
+          <div class="mk-card">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+              <div style="width:22px;height:22px;border:1px solid var(--app-accent);border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--app-accent);">S</div>
+              <span style="font-size:12px;color:var(--app-n500);">SSCC</span>
+            </div>
+            <div style="font-size:19px;font-weight:700;color:var(--app-ink);margin-bottom:6px;">2026 신입회원 모집</div>
+            <div style="font-size:12px;color:var(--app-n500);margin-bottom:12px;">08.01 09:00 ~ 08.25 23:59</div>
+            <div class="mk-progress" style="margin-bottom:16px;"><span style="width:50%;"></span></div>
+            <div style="border:1px solid var(--app-line);border-radius:14px;padding:12px;margin-bottom:10px;">
+              <div style="font-size:13.5px;font-weight:500;color:var(--app-ink);">이름을 입력해 주세요 <span style="color:var(--app-danger);">*</span></div>
+              <div style="margin-top:8px;border:1px solid var(--app-line-strong);border-radius:8px;height:32px;"></div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <span class="mk-btn primary" style="padding:8px 20px;">다음</span>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">공개 폼 작성 화면 — /f/{formId}</p>
+      </div>
+
+      <p class="note">
+        마지막 페이지까지 마치고 제출하면 완료 화면으로 넘어가며, 이후에는 같은 링크로
+        다시 들어가도 재작성할 수 없습니다(폼이 재제출을 허용하지 않는 한).
+      </p>
+    </section>
+
+    <section class="doc-section" id="sec-my">
+      <div class="section-head"><span class="idx">12</span><h2>내 계정</h2></div>
+      <p class="section-kicker"><span class="route-chip">/my</span></p>
+
+      <p>
+        본인이 직접 고칠 수 있는 정보와, 운영진만 바꿀 수 있는 정보가 한 화면에서
+        분리돼 보입니다.
+      </p>
+
+      <div class="mock-frame">
+        <div class="mock-inner">
+          <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:14px;">
+            <div class="mk-card">
+              <div class="mk-section-label">회원 정보</div>
+              <dl class="mk-kv" style="grid-template-columns:70px 1fr;">
+                <dt>이름</dt><dd>이지원</dd>
+                <dt>학번</dt><dd>20231234</dd>
+                <dt>학과</dt><dd>컴퓨터학부</dd>
+                <dt>학년</dt><dd>3학년</dd>
+                <dt>전화번호</dt><dd>010-****-5678</dd>
+              </dl>
+              <div style="margin-top:10px;font-size:12px;color:var(--app-accent);">프로필 수정</div>
+            </div>
+            <div class="mk-card">
+              <div class="mk-section-label">운영진만 변경할 수 있는 항목</div>
+              <dl class="mk-kv" style="grid-template-columns:70px 1fr;">
+                <dt>기수</dt><dd>15기</dd>
+                <dt>등급</dt><dd><span class="mk-badge mk-b-blue">정회원</span></dd>
+                <dt>상태</dt><dd><span class="mk-badge mk-b-grey">활동</span></dd>
+                <dt>현재역할</dt><dd><span class="mk-badge mk-b-outline">회장</span> <span class="mk-pill mk-p-blue" style="margin-left:2px;">대표</span></dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">내 계정 — /my</p>
+      </div>
+
+      <p class="note">
+        학번·이메일·기수·등급·상태·역할은 본인이 직접 바꿀 수 없습니다. 잘못 등록됐다면
+        운영진(회원 관리 권한자)에게 요청하세요.
+      </p>
+    </section>
+
+    <section class="doc-section" id="sec-glossary">
+      <div class="section-head"><span class="idx">·</span><h2>배지 · 표기 범례</h2></div>
+      <p class="section-kicker">화면 전반에서 반복되는 시각 표기</p>
+
+      <h3 class="sub-head">상태 배지 톤</h3>
+      <div class="legend-row">
+        <span class="item"><span class="mk-badge mk-b-blue">진행 · 승인 · 접수중</span></span>
+        <span class="item"><span class="mk-badge mk-b-amber">대기 · 검토</span></span>
+        <span class="item"><span class="mk-badge mk-b-red">지연 · 반려 · 미연결</span></span>
+        <span class="item"><span class="mk-badge mk-b-grey">완료 · 중립</span></span>
+        <span class="item"><span class="mk-badge mk-b-outline">기본 상태</span></span>
+        <span class="item"><span class="mk-badge mk-b-outline-accent">강조 필요</span></span>
+      </div>
+
+      <h3 class="sub-head">마감 표기</h3>
+      <table class="field-table">
+        <tr><th style="width:110px;">배지</th><th>의미</th></tr>
+        <tr><td class="k">D-3, D-1 …</td><td class="d">마감까지 남은 일수</td></tr>
+        <tr><td class="k">D-DAY</td><td class="d">오늘이 마감일 — 아직 지연은 아닙니다</td></tr>
+        <tr><td class="k">D+2 · 지연</td><td class="d">마감을 넘긴 상태. 빨간 글자·배지로 표시됩니다</td></tr>
+        <tr><td class="k">마감임박</td><td class="d">마감 3일 이내</td></tr>
+      </table>
+
+      <h3 class="sub-head">목록 스크롤 — "더 보기"</h3>
+      <p class="note">
+        목록은 페이지 번호가 아니라 <b>더 보기</b> 버튼으로 다음 묶음을 이어 받습니다.
+        전체 개수는 알 수 있지만 "3페이지로 바로 이동" 같은 기능은 없습니다.
+      </p>
+    </section>
+
+    <section class="doc-section" id="sec-permission">
+      <div class="section-head"><span class="idx">·</span><h2>권한 안내</h2></div>
+      <p class="section-kicker">버튼이 안 눌리거나 메뉴가 안 보일 때</p>
+
+      <div class="callout tip">
+        <span class="glyph">i</span>
+        <p><b>이동은 감추고, 동작은 잠급니다.</b> 갈 수 없는 메뉴는 사이드바에서
+        아예 보이지 않지만, 이미 보고 있는 화면 안의 버튼은 사라지지 않고 잠긴 채
+        남아 사유를 알려줍니다. 버튼에 마우스를 올려 이유를 확인하세요.</p>
+      </div>
+
+      <table class="field-table">
+        <tr><th style="width:170px;">증상</th><th>의미</th></tr>
+        <tr><td class="k">버튼이 흐리게 잠겨 있다</td><td class="d">그 동작에 필요한 권한이 없습니다. 마우스를 올리면 어떤 권한이 필요한지 나옵니다.</td></tr>
+        <tr><td class="k">멀쩡하던 화면에서 갑자기 403</td><td class="d">권한이 방금 바뀐 것입니다. 화면이 자동으로 최신 상태로 다시 맞춥니다 — 그래도 안 되면 새로고침하세요.</td></tr>
+        <tr><td class="k">조회는 되는데 저장만 안 된다</td><td class="d">조회 권한과 쓰기 권한이 분리된 화면입니다(하위 업무 유형 관리 등). 정상 동작입니다.</td></tr>
+      </table>
+    </section>
+
+    <div class="colophon">
+      <span>SSCC 운영관리시스템 사용 설명서</span>
+      <span>화면 구성은 실제 배포 버전과 다를 수 있습니다</span>
+    </div>
+  </main>
+</div>
